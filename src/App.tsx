@@ -1,41 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import twaLogo from './assets/tapps.png'
-import viteLogo from '/vite.svg'
-import './App.css'
-
-import WebApp from '@twa-dev/sdk'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import WebApp from "@twa-dev/sdk";
+import HomePage from "./pages/HomePage";
+import CountryFeatureListing from "./pages/CountryFeatureListing";
+import GlobalFeatureListing from "./pages/GlobalFeatureListing";
+import SearchLink from "./pages/SearchLink";
+import SubmitLink from "./pages/SubmitLink";
+import MySubmittedLinks from "./pages/MySubmittedLinks";
+import MyFeatureListing from "./pages/MyFeatureListing";
+import BuyTickets from "./pages/BuyTickets";
+import TicketHistory from "./pages/TicketHistory";
+import FeaturedChannels from "./pages/FeaturedChannels";
+import AnnouncementPage from "./pages/AnnouncementPage";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Initialize WebApp when the app first loads
+  useEffect(() => {
+    WebApp.ready();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://ton.org/dev" target="_blank">
-          <img src={twaLogo} className="logo" alt="TWA logo" />
-        </a>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>TWA + Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-      {/*  */}
-      <div className="card">
-        <button onClick={() => WebApp.showAlert(`Hello World! Current count is ${count}`)}>
-            Show Alert
-        </button>
-      </div>
-    </>
-  )
+    <BrowserRouter basename="/tgdirectory">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/submit-link" element={<SubmitLink />} />
+        <Route path="/search-link" element={<SearchLink />} />
+        <Route path="/country-feature-listing" element={<CountryFeatureListing />} />
+        <Route path="/global-feature-listing" element={<GlobalFeatureListing />} />
+        <Route path="/my-submitted-links" element={<MySubmittedLinks />} />
+        <Route path="/my-feature-listing" element={<MyFeatureListing />} />
+        <Route path="/buy-tickets" element={<BuyTickets />} />
+        <Route path="/ticket-history" element={<TicketHistory />} />
+        <Route path="/featured-channels" element={<FeaturedChannels />} />
+        <Route path="/announcement" element={<AnnouncementPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
