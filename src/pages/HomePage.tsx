@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
                 </div>
 
                 {/* How to submit link */}
-                <div className="text-center py-4">
+                <div className="text-center pb-4">
                     <a 
                       href="https://www.youtube.com/watch?v=OW5oJiNMcdA"
                       target="_blank"
@@ -97,9 +97,9 @@ const HomePage: React.FC = () => {
                     >
                         Global Feature Listing
                     </button>
-                    <button className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white py-3 rounded-lg text-base font-semibold">
+                    {/* <button className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white py-3 rounded-lg text-base font-semibold">
                         Promote your business
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </Layout>
