@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../components/layout/Layout';
-import BannerCarousel from '../components/BannerCarousel';
+import BannerCarousel from '../components/TopBannerCarousel';
 import { featuredChannels } from '../data/data';
 
 const FeaturedChannels: React.FC = () => {
@@ -48,8 +48,7 @@ const FeaturedChannels: React.FC = () => {
       <div className="mt-4">
         {/* Banner Carousel */}
         <BannerCarousel 
-          apiUrl="/api/get-top-banner"
-          imagePath="https://telegramdirectory.org/frontend/bannersliderimage/"
+
         />
         
         {/* Featured Channel List */}

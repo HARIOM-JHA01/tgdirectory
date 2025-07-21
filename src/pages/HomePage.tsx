@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import WebApp from '@twa-dev/sdk';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import BannerCarousel from '../components/BannerCarousel';
+import BannerCarousel from '../components/TopBannerCarousel';
 import tgdcBanner from '../assets/tgdc.jpg';
 
 const HomePage: React.FC = () => {
@@ -47,8 +47,7 @@ const HomePage: React.FC = () => {
 
                 {/* Banner Carousel from API */}
                 <BannerCarousel 
-                    apiUrl="/api/get-top-banner"
-                    imagePath="https://telegramdirectory.org/frontend/bannersliderimage/"
+                    
                 />
 
                 {/* TG Directory Channel Banner */}

@@ -1,46 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { BannerItem, BannerResponse } from '../types/types';
+import { BottomBannerItem, BottomBannerResponse } from '../types/types';
 
-interface BannerCarouselProps {
-  apiUrl: string;
-  imagePath: string;
+interface BottomBannerCarouselProps {
   height?: string;
 }
 
-const BannerCarousel: React.FC<BannerCarouselProps> = ({ apiUrl, imagePath, height = 'h-[135px]' }) => {
-  const [banners, setBanners] = useState<BannerItem[]>([]);
+const API_URL = '/api/get-bottom-banner';
+const IMAGE_PATH = 'https://telegramdirectory.org/frontend/gallery/';
+
+const BottomBannerCarousel: React.FC<BottomBannerCarouselProps> = ({ height = 'h-[110px]' }) => {
+  const [banners, setBanners] = useState<BottomBannerItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
   useEffect(() => {
-    // Fetch banner data
+    let fetchUrl = API_URL;
+    try {
+      const url = new URL(API_URL, window.location.origin);
+      if (url.origin === window.location.origin) {
+        fetchUrl = url.pathname + url.search + url.hash;
+      }
+    } catch {
+      // Already relative
+    }
     const fetchBannerData = async () => {
       try {
-        const response = await fetch(apiUrl);
-        const data: BannerResponse = await response.json();
-
+        const response = await fetch(fetchUrl);
+        const data: BottomBannerResponse = await response.json();
         if (data.status && data.slider) {
           setBanners(data.slider);
         }
       } catch (error) {
-        console.error("Error fetching banner data:", error);
+        console.error('Error fetching bottom banners:', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchBannerData();
-  }, [apiUrl]);
+  }, []);
 
-  // Auto-rotate carousel every 3 seconds
   useEffect(() => {
     if (banners.length > 0) {
       const interval = setInterval(() => {
-        setCurrentBannerIndex(
-          (prevIndex) => (prevIndex + 1) % banners.length
-        );
+        setCurrentBannerIndex((prevIndex) => (prevIndex + 1) % banners.length);
       }, 3000);
-
       return () => clearInterval(interval);
     }
   }, [banners.length]);
@@ -56,23 +59,20 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ apiUrl, imagePath, heig
           {banners.map((banner, index) => (
             <a
               key={banner.id}
-              href={banner.slider_link}
+              href={banner.gallery_link}
               target="_blank"
               rel="noopener noreferrer"
               className={`absolute inset-0 transition-opacity duration-500 ${
-                index === currentBannerIndex
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
+                index === currentBannerIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
               <img
-                src={`${imagePath}${banner.slider_banner_image}`}
-                alt={banner.slider_banner_img_alt || "Banner"}
+                src={`${IMAGE_PATH}${banner.gallery_image}`}
+                alt={banner.gallery_img_alt || 'Banner'}
                 className="w-full h-full object-cover rounded-lg shadow-lg"
               />
             </a>
           ))}
-
           {/* Carousel Navigation Dots */}
           <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-20">
             {banners.map((_, index) => (
@@ -80,9 +80,7 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ apiUrl, imagePath, heig
                 key={index}
                 onClick={() => setCurrentBannerIndex(index)}
                 className={`w-1.5 h-1.5 rounded-full ${
-                  index === currentBannerIndex
-                    ? "bg-white"
-                    : "bg-gray-400"
+                  index === currentBannerIndex ? 'bg-white' : 'bg-gray-400'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
@@ -98,4 +96,4 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({ apiUrl, imagePath, heig
   );
 };
 
-export default BannerCarousel;
+export default BottomBannerCarousel;

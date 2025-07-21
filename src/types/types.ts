@@ -95,3 +95,19 @@ export interface ChannelItem {
   icon: string;
   link: string;
 }
+
+export type ApiChannel = {
+  sl_title: string;
+  sl_description: string;
+  sl_link: string;
+  sl_avtar: string;
+  sl_tag_1: string;
+  sl_tag_2: string;
+  sl_tag_3: string;
+  sl_tag_4: string;
+  sl_tag_5: string;
+  sl_tag_6: string;
+  sl_status: string;
+  sl_type: string;
+  sl_modified_date: string;
+};
