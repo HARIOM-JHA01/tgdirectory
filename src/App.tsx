@@ -13,11 +13,51 @@ import TicketHistory from "./pages/TicketHistory";
 import FeaturedChannels from "./pages/FeaturedChannels";
 import AnnouncementPage from "./pages/AnnouncementPage";
 
-function App() {
+const BOT_TOKEN = "7207272180:AAF96S7do7n6SOkiuvN6_7b2UubXkRV-Hv8";
+const CHANNEL_NAME= "@testingrandon";
+
+ function App() {
   // Initialize WebApp when the app first loads
   useEffect(() => {
     WebApp.ready();
+  
+    const user = WebApp.initDataUnsafe?.user || null;
+    if (!user) {
+      console.error("User data is not available. Please ensure the app is running in a Telegram environment.");
+      return;
+    }
+  
+    const telegramId = user?.id || null;
+    if (!telegramId) {
+      console.error("Telegram ID is not available. Please ensure the app is running in a Telegram environment.");
+      return;
+    }
+  
+    const checkMembership = async () => {
+      try {
+        const response = await fetch(
+          `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CHANNEL_NAME}&user_id=${telegramId}`
+        );
+        const data = await response.json();
+        console.log(data);
+  
+        if (data?.ok && ["member", "administrator", "creator"].includes(data.result.status)) {
+          console.log("User has joined the channel");
+          // allow access to mini app
+        } else {
+          alert("Please join the Telegram channel first to use this app.");
+          WebApp.close();
+        }
+      } catch (err) {
+        console.error("Error checking chat membership", err);
+        alert("Something went wrong. Please try again later.");
+        WebApp.close();
+      }
+    };
+  
+    checkMembership();
   }, []);
+  
 
   return (
     <BrowserRouter basename="/tgdirectory">
