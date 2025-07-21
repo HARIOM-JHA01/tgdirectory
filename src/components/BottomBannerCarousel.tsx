@@ -69,7 +69,7 @@ const BottomBannerCarousel: React.FC<BottomBannerCarouselProps> = ({ height = 'h
               <img
                 src={`${IMAGE_PATH}${banner.gallery_image}`}
                 alt={banner.gallery_img_alt || 'Banner'}
-                className="w-full h-full object-cover rounded-lg shadow-lg"
+                className="w-full h-full object-contain rounded-lg shadow-lg"
               />
             </a>
           ))}

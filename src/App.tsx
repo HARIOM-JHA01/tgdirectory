@@ -12,6 +12,7 @@ import BuyTickets from "./pages/BuyTickets";
 import TicketHistory from "./pages/TicketHistory";
 import FeaturedChannels from "./pages/FeaturedChannels";
 import AnnouncementPage from "./pages/AnnouncementPage";
+import TicketQuota from "./pages/TicketQuota";
 
 const BOT_TOKEN = "7207272180:AAF96S7do7n6SOkiuvN6_7b2UubXkRV-Hv8";
 const CHANNEL_NAME= "@testingrandon";
@@ -21,18 +22,18 @@ const CHANNEL_NAME= "@testingrandon";
   useEffect(() => {
     WebApp.ready();
   
-    const user = WebApp.initDataUnsafe?.user || null;
-    if (!user) {
-      console.error("User data is not available. Please ensure the app is running in a Telegram environment.");
-      return;
-    }
+    // const user = WebApp.initDataUnsafe?.user || null;
+    // if (!user) {
+    //   console.error("User data is not available. Please ensure the app is running in a Telegram environment.");
+    //   return;
+    // }
   
-    const telegramId = user?.id || null;
-    if (!telegramId) {
-      console.error("Telegram ID is not available. Please ensure the app is running in a Telegram environment.");
-      return;
-    }
-  
+    // const telegramId = user?.id || null;
+    // if (!telegramId) {
+    //   console.error("Telegram ID is not available. Please ensure the app is running in a Telegram environment.");
+    //   return;
+    // }
+    const telegramId = "123456789";
     const checkMembership = async () => {
       try {
         const response = await fetch(
@@ -45,17 +46,34 @@ const CHANNEL_NAME= "@testingrandon";
           console.log("User has joined the channel");
           // allow access to mini app
         } else {
-          alert("Please join the Telegram channel first to use this app.");
+          WebApp.showAlert("Please join the Telegram channel first to use this app.");
           WebApp.close();
         }
       } catch (err) {
         console.error("Error checking chat membership", err);
-        alert("Something went wrong. Please try again later.");
+        WebApp.showAlert("Something went wrong. Please try again later.");
         WebApp.close();
       }
     };
-  
+
+    const loginToMiniApp = async () => {
+      const response = await fetch(`/api/en/tg-login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ login_ju_telegram: telegramId }),
+      });
+      if (!response.ok) {
+        console.error("Failed to login to mini app");
+        WebApp.showAlert("Login failed. Please try again.");
+        return;
+      }
+      const data = await response.json();
+      console.log(data);
+    };
     checkMembership();
+    loginToMiniApp();
   }, []);
   
 
@@ -73,6 +91,7 @@ const CHANNEL_NAME= "@testingrandon";
         <Route path="/ticket-history" element={<TicketHistory />} />
         <Route path="/featured-channels" element={<FeaturedChannels />} />
         <Route path="/announcement" element={<AnnouncementPage />} />
+        <Route path="/ticket-quota" element={<TicketQuota />} />
       </Routes>
     </BrowserRouter>
   );

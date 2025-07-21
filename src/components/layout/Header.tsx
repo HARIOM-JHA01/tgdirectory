@@ -6,6 +6,24 @@ import announcementIcon from '../../assets/announcement.png'
 import profileIcon from '../../assets/profile.png'
 import LanguageSelector from './LanguageSelector'
 import { LanguageItem } from '../../types/types';
+import { Link, Star, Ticket, Clock, Send } from "lucide-react";
+
+interface MenuItemProps {
+  icon: React.ReactNode;
+  text: string;
+  onClick: () => void;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({ icon, text, onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center gap-2 w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out"
+    role="menuitem"
+  >
+    {icon}
+    <span>{text}</span>
+  </button>
+);
 
 function Header() {
   const navigate = useNavigate();
@@ -60,42 +78,37 @@ function Header() {
               {/* Profile Menu Dropdown */}
               {profileMenuOpen && (
                 <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                    <button
+                  <div
+                    className="bg-white rounded-xl shadow-xl p-2 w-64 divide-y divide-gray-200"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="options-menu"
+                  >
+                    <MenuItem
+                      icon={<Send size={16} />}
+                      text="Submit New Link"
                       onClick={() => handleMenuItemClick('/submit-link')}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      Submit New Link
-                    </button>
-                    <button
+                    />
+                    <MenuItem
+                      icon={<Link size={16} />}
+                      text="My Submitted Links"
                       onClick={() => handleMenuItemClick('/my-submitted-links')}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      My Submitted Link
-                    </button>
-                    <button
+                    />
+                    <MenuItem
+                      icon={<Star size={16} />}
+                      text="My Feature Listing"
                       onClick={() => handleMenuItemClick('/my-feature-listing')}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      My Feature Listing
-                    </button>
-                    <button
+                    />
+                    <MenuItem
+                      icon={<Ticket size={16} />}
+                      text="Buy Tickets"
                       onClick={() => handleMenuItemClick('/buy-tickets')}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      Buy Tickets
-                    </button>
-                    <button
+                    />
+                    <MenuItem
+                      icon={<Clock size={16} />}
+                      text="Ticket History"
                       onClick={() => handleMenuItemClick('/ticket-history')}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      role="menuitem"
-                    >
-                      Ticket History
-                    </button>
+                    />
                   </div>
                 </div>
               )}

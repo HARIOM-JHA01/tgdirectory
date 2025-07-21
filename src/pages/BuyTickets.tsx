@@ -11,9 +11,8 @@ const BuyTickets: React.FC = () => {
   };
 
   const handleBuyNow = (ticketType: string, price: number) => {
-    // Implementation for purchasing tickets would go here
+    navigate('/ticket-quota');
     console.log(`Buying ${ticketType} ticket for ${price} USDT`);
-    // Could navigate to a payment page or show a payment modal
   };
 
   return (
