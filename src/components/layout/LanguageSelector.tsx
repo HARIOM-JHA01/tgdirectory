@@ -59,7 +59,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageSelect })
         onClick={toggleModal}
         className="flex items-center justify-center"
       >
-        <img src={languageIcon} alt="Language" className="w-6 h-6" />
+        <img src={languageIcon} alt="Language" className="w-8 h-8" />
       </button>
 
       {/* Modal Overlay - Fixed position with right alignment */}

@@ -72,7 +72,7 @@ function Header() {
                 className="flex items-center justify-center cursor-pointer"
                 onClick={toggleProfileMenu}
               >
-                <img src={profileIcon} alt="Profile" className="w-6 h-6" />
+                <img src={profileIcon} alt="Profile" className="w-8 h-8" />
               </div>
               
               {/* Profile Menu Dropdown */}
@@ -117,7 +117,7 @@ function Header() {
               className="flex items-center justify-center cursor-pointer"
               onClick={() => {navigate('/announcement')}}
             >
-              <img src={announcementIcon} alt="Announcement" className="w-6 h-6" />
+              <img src={announcementIcon} alt="Announcement" className="w-8 h-8" />
             </div>
           </div>
           
@@ -126,7 +126,7 @@ function Header() {
             className="flex items-center justify-center cursor-pointer"
             onClick={() => {navigate('/')}}
           >
-            <img src={tgdLogo} alt="TG Directory" className="w-9 h-9" />
+            <img src={tgdLogo} alt="TG Directory" className="w-12 h-12" />
           </div>
           
           {/* Right side icons */}
@@ -135,7 +135,7 @@ function Header() {
               className="flex items-center justify-center cursor-pointer"
               onClick={() => {navigate('/featured-channels')}}
             >
-              <img src={newIcon} alt="New" className="w-6 h-6" />
+              <img src={newIcon} alt="New" className="w-8 h-8" />
             </div>
             <div className="flex items-center justify-center">
               <LanguageSelector onLanguageSelect={handleLanguageSelect} />

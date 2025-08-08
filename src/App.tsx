@@ -1,6 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import CountryFeatureListing from "./pages/CountryFeatureListing";
 import GlobalFeatureListing from "./pages/GlobalFeatureListing";
@@ -22,18 +22,18 @@ const CHANNEL_NAME= "@testingrandon";
   useEffect(() => {
     WebApp.ready();
   
-    // const user = WebApp.initDataUnsafe?.user || null;
-    // if (!user) {
-    //   console.error("User data is not available. Please ensure the app is running in a Telegram environment.");
-    //   return;
-    // }
+    const user = WebApp.initDataUnsafe?.user || null;
+    if (!user) {
+      console.error("User data is not available. Please ensure the app is running in a Telegram environment.");
+      return;
+    }
   
-    // const telegramId = user?.id || null;
-    // if (!telegramId) {
-    //   console.error("Telegram ID is not available. Please ensure the app is running in a Telegram environment.");
-    //   return;
-    // }
-    const telegramId = "123456789";
+    const telegramId = user?.id || null;
+    if (!telegramId) {
+      console.error("Telegram ID is not available. Please ensure the app is running in a Telegram environment.");
+      return;
+    }
+    // const telegramId = "123456789";
     const checkMembership = async () => {
       try {
         const response = await fetch(
@@ -46,12 +46,12 @@ const CHANNEL_NAME= "@testingrandon";
           console.log("User has joined the channel");
           // allow access to mini app
         } else {
-          WebApp.showAlert("Please join the Telegram channel first to use this app.");
+          WebApp.showAlert("To use this app, you have to Join to our channel: https://t.me/TGDirectories\nJoin us and try again later");
           WebApp.close();
         }
       } catch (err) {
         console.error("Error checking chat membership", err);
-        WebApp.showAlert("Something went wrong. Please try again later.");
+        WebApp.showAlert("To use this app, you have to Join to our channel: https://t.me/TGDirectories\nJoin us and try again later");
         WebApp.close();
       }
     };

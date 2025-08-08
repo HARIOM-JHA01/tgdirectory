@@ -51,7 +51,9 @@ const HomePage: React.FC = () => {
                 />
 
                 {/* TG Directory Channel Banner */}
-                <div className="px-4 pb-4">
+                <div className="px-4 pb-4"
+                onClick={() => window.open('https://t.me/TGDirectories', '_blank')}
+                >
                     <img
                         src={tgdcBanner}
                         alt="TG Directory Logo"

@@ -79,7 +79,7 @@ const TopBannerCarousel: React.FC<TopBannerCarouselProps> = ({ height = 'h-[135p
               <img
                 src={`${IMAGE_PATH}${banner.slider_banner_image}`}
                 alt={banner.slider_banner_img_alt || "Banner"}
-                className="w-full h-full object-contain rounded-lg shadow-lg"
+                className="w-full h-full rounded-lg shadow-lg"
               />
             </a>
           ))}

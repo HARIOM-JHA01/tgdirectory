@@ -75,7 +75,7 @@ const GlobalFeatureListing: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200">
         {/* Global Featured Title - moved to top */}
         <div className="mx-4 py-4">
-          <div className="bg-white border-2 border-purple-400 rounded-xl p-4">
+          <div className="bg-blue-300 border-2 border-purple-400 p-1">
             <h2 className="text-center text-xl font-bold text-purple-600">
               Globally Featured Telegram Channels
             </h2>
@@ -123,7 +123,7 @@ const GlobalFeatureListing: React.FC = () => {
               className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-indigo-600 hover:to-purple-700 transition-all"
               onClick={() => setVisibleCount((prev) => prev + 5)}
             >
-              Load More Global Channels
+              Load More
             </button>
           )}
         </div>

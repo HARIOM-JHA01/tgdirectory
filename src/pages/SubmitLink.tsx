@@ -78,7 +78,7 @@ const SubmitLink: React.FC = () => {
       try {
         const res = await fetch('/api/getLanguage');
         const data = await res.json();
-        const langs = data.data || data.languages || [];
+        const langs = data.data || data.language || [];
         setLanguages(Array.isArray(langs) ? langs : []);
       } catch (error) {
         console.error('Error fetching languages:', error);

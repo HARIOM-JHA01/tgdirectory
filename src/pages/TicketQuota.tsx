@@ -20,14 +20,29 @@ const TicketQuota = () => {
 
                     <div className="flex justify-center mb-8">
                         <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-                            Select Your Payment Method to Proceed
+                            Scan QR code or copy wallet address to make payment and submit transaction details below
                         </button>
                     </div>
 
                     <form className="grid md:grid-cols-2 gap-8">
+                        {/* Right section - QR & Wallet */}
+                        <div className="text-center">
+                            <h3 className="font-semibold text-lg mb-4">Scan QR Code</h3>
+                            <img
+                                src={walletTransfer}
+                                alt="QR Code"
+                                className="mx-auto border border-gray-300 rounded-lg mb-6"
+                            />
+                            <p className="text-sm font-medium break-all bg-gray-100 p-4 rounded-lg">
+                                Copy Wallet Address<br />
+                                <span className="text-blue-600"
+                                onClick={() => navigator.clipboard.writeText('UQBHQOTb9cpVQ7I3Gml2f6eyV5JU97j_6dot0gJ52dcrg8ud')}
+                                >UQBHQOTb9cpVQ7I3Gml2f6eyV5JU97j_6dot0gJ52dcrg8ud</span>
+                            </p>
+                        </div>
                         {/* Left section */}
                         <div>
-                            <label className="block font-semibold mb-2">Toncoin Wallet</label>
+                            {/* <label className="block font-semibold mb-2">Toncoin Wallet</label> */}
                             <label className="block mb-2 font-semibold">Submit Transaction Details</label>
 
                             <select
@@ -69,19 +84,7 @@ const TicketQuota = () => {
                             </button>
                         </div>
 
-                        {/* Right section - QR & Wallet */}
-                        <div className="text-center">
-                            <h3 className="font-semibold text-lg mb-4">Scan QR Code</h3>
-                            <img
-                                src={walletTransfer}
-                                alt="QR Code"
-                                className="mx-auto border border-gray-300 rounded-lg mb-6"
-                            />
-                            <p className="text-sm font-medium break-all bg-gray-100 p-4 rounded-lg">
-                                Copy Wallet Address<br />
-                                <span className="text-blue-600">UQBHQOTb9cpVQ7I3Gml2f6eyV5JU97j_6dot0gJ52dcrg8ud</span>
-                            </p>
-                        </div>
+                        
                     </form>
 
                     <p className="text-center text-sm mt-8">
