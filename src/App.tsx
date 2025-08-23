@@ -21,15 +21,21 @@ function App() {
     const [showWelcome, setShowWelcome] = useState(false);
     const [showUsernameExistPopup, setShowUsernameExistPopup] = useState(false);
     const [deletingUser, setDeletingUser] = useState(false);
-    const [telegramId, setTelegramId] = useState<string | number | undefined>(undefined); // <-- add state
+    // Removed unused telegramId state
 
     useEffect(() => {
         WebApp.ready();
 
         const user = WebApp.initDataUnsafe?.user;
-        const telegramId = user?.id;
-        setTelegramId(telegramId); // <-- set state
+        const telegramId = user?.id; // Use this variable directly where needed
         const username = user?.username || "";
+        // Check for username first
+        if (!username) {
+            WebApp.showAlert("You do not have a username for your telegram account. Please set a username before using this app.", () => {
+                WebApp.close();
+            });
+            return;
+        }
         // const telegramId = "1882287904";
         // const username = "hariomjha01";
         const checkMembership = async () => {
@@ -225,11 +231,11 @@ function App() {
                             try {
                                 const formData = new FormData();
                                 formData.append(
-                                    "telegram_id",
-                                    telegramId?.toString() || ""
+                                    "telegram_username",
+                                    WebApp.initDataUnsafe?.user?.username || ""
                                 );
                                 await fetch(
-                                    "https://telegramdirectory.org/api/disable-user",
+                                    "/api/disable-user",
                                     {
                                         method: "POST",
                                         body: formData,
@@ -237,7 +243,7 @@ function App() {
                                 );
                                 setShowUsernameExistPopup(false);
                                 setDeletingUser(false);
-                                await loginToMiniApp(); // Try login again as new user
+                                WebApp.close(); // Close the app after deletion
                             } catch {
                                 setDeletingUser(false);
                                 WebApp.showAlert(

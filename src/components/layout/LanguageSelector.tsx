@@ -12,12 +12,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageSelect })
   const [languages, setLanguages] = useState<LanguageItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { language, setLanguage, setLKey } = useLanguage();
+  const { language, setLanguage, setLKey, loading } = useLanguage();
 
   const fetchLanguages = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://telegramdirectory.org/api/getLanguage');
+      const response = await fetch('/api/getLanguage');
       const data = await response.json();
       if (data.language) {
         setLanguages(data.language);
@@ -61,14 +61,21 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageSelect })
       <button
         onClick={toggleModal}
         className="flex items-center justify-center"
+        disabled={loading}
+        aria-busy={loading}
       >
-        {/* Use selected language flag, fallback to default icon */}
-        <img
-          src={selectedLanguageItem?.image || languageIcon}
-          alt={selectedLanguageItem?.name || 'Language'}
-          className="w-8 h-8 rounded-full object-cover"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).src = languageIcon; }}
-        />
+        {loading ? (
+          <span className="w-8 h-8 flex items-center justify-center">
+            <span className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></span>
+          </span>
+        ) : (
+          <img
+            src={selectedLanguageItem?.image || languageIcon}
+            alt={selectedLanguageItem?.name || 'Language'}
+            className="w-8 h-8 rounded-full object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = languageIcon; }}
+          />
+        )}
       </button>
 
       {/* Modal Overlay - Fixed position with right alignment */}

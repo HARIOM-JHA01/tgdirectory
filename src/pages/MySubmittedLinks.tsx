@@ -31,7 +31,6 @@ const MySubmittedLinks: React.FC = () => {
     const [submittedLinks, setSubmittedLinks] = useState<SubmittedLink[]>([]);
     const [showFeaturePopup, setShowFeaturePopup] = useState(false);
     const [featureLinkId, setFeatureLinkId] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string | null>(null);
     const [featureType, setFeatureType] = useState<"country" | "global" | null>(
         null
     );
@@ -43,7 +42,7 @@ const MySubmittedLinks: React.FC = () => {
             allow: number;
         }[]
     >([]);
-    const [selectedCountry, setSelectedCountry] = useState<string>("");
+    const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [featureMsg, setFeatureMsg] = useState<string>("");
     const [showViewPopup, setShowViewPopup] = useState(false);
@@ -92,7 +91,7 @@ const MySubmittedLinks: React.FC = () => {
         try {
             const formData = new FormData();
             formData.append("submit_link_id", viewDetails.id);
-            await fetch("https://telegramdirectory.org/api/en/delete", {
+            await fetch("/api/en/delete", {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -108,12 +107,12 @@ const MySubmittedLinks: React.FC = () => {
         setViewLoading(false);
     };
 
-    const handleMakeItFeaturesListing = (linkId: string) => {
+    const handleMakeItFeaturesListing = async (linkId: string) => {
         setFeatureLinkId(linkId);
-        setFeatureType("global"); // default to global
+        setFeatureType("global");
         setShowFeaturePopup(true);
         setFeatureMsg("");
-        setSelectedCountry("");
+        setSelectedCountries([]);
     };
 
     const handleEditClick = () => {
@@ -138,21 +137,27 @@ const MySubmittedLinks: React.FC = () => {
             formData.append("sl_title", editForm.sl_title);
             formData.append("sl_description", editForm.sl_description);
             formData.append("sl_link", editForm.sl_link);
+            formData.append("telegram_id", telegramId?.toString() || "");
             for (let i = 1; i <= 6; i++) {
                 formData.append(
                     `sl_tag_${i}`,
                     editForm[`sl_tag_${i}` as keyof ViewLinkDetails] || ""
                 );
             }
-            await fetch("https://telegramdirectory.org/api/en/submit-link", {
+            const res = await fetch("/api/en/submit-link", {
                 method: "POST",
                 body: formData,
                 credentials: "include",
             });
+            const data = await res.json();
+            if (data.status !== 1 || data.success !== 1) {
+                setEditErrors({ form: data.msg ? data.msg : t("FAILED_UPDATE") });
+                setEditLoading(false);
+                return;
+            }
             setShowEditForm(false);
             setShowViewPopup(false);
             setViewDetails(null);
-            // Optionally refresh list
             setSubmittedLinks((prev) =>
                 prev.map((l) =>
                     l.id === editForm.id
@@ -165,8 +170,20 @@ const MySubmittedLinks: React.FC = () => {
                         : l
                 )
             );
-        } catch (err) {
-            setEditErrors({ form: t("FAILED_UPDATE") });
+        } catch (err: any) {
+            // Try to extract API error message if possible
+            if (err instanceof Response) {
+                try {
+                    const errorData = await err.json();
+                    setEditErrors({ form: errorData.msg ? errorData.msg : t("FAILED_UPDATE") });
+                } catch {
+                    setEditErrors({ form: t("FAILED_UPDATE") });
+                }
+            } else if (err?.message) {
+                setEditErrors({ form: err.message });
+            } else {
+                setEditErrors({ form: t("FAILED_UPDATE") });
+            }
         }
         setEditLoading(false);
     };
@@ -175,7 +192,7 @@ const MySubmittedLinks: React.FC = () => {
         const fetchSubmittedLinks = async () => {
             try {
                 const response = await axios.get(
-                    `https://telegramdirectory.org/api/en/submit-list?telegram_id=${telegramId}`,
+                    `/api/en/submit-list?telegram_id=${telegramId}`,
                     {
                         headers: {
                             Cookie: "ci_session_frontend=a7booq7io5b88ghqll4va8gkvblvgb1i",
@@ -191,30 +208,12 @@ const MySubmittedLinks: React.FC = () => {
         fetchSubmittedLinks();
     }, []);
     useEffect(() => {
-        const fetchUserId = async () => {
-            try {
-                const res = await fetch(
-                    "https://telegramdirectory.org/api/en/get-user-id",
-                    {
-                        credentials: "include",
-                    }
-                );
-                const data = await res.json();
-                setUserId(data.user_id || null);
-            } catch (error) {
-                console.error("Failed to fetch user ID:", error);
-            }
-        };
-
-        fetchUserId();
-    }, []);
-    useEffect(() => {
         if (showFeaturePopup) {
             // Fetch feature duration (weeks/days)
             const fetchDuration = async () => {
                 try {
                     const res = await fetch(
-                        "https://telegramdirectory.org/api/features-listing-day"
+                        "/api/features-listing-day"
                     );
                     const data = await res.json();
                     setFeatureDuration(data?.data || "1");
@@ -247,29 +246,31 @@ const MySubmittedLinks: React.FC = () => {
         if (!featureLinkId) return;
         setLoading(true);
         setFeatureMsg("");
-        let country_id = "248";
         let link_booster = "248";
         let item_name = t("GFL");
+        let country_ids: string[] = [];
         if (featureType === "country") {
-            if (!selectedCountry) {
+            if (!selectedCountries.length) {
                 setFeatureMsg(t("PLS_SC"));
                 setLoading(false);
                 return;
             }
-            country_id = selectedCountry;
+            country_ids = selectedCountries;
             link_booster = "0";
             item_name = t("CFL");
         }
         try {
             const formData = new FormData();
-            formData.append("user_id", userId || "");
             formData.append("telegram_id", telegramId?.toString() || "");
             formData.append("submit_link_id", featureLinkId);
             formData.append("item_name", item_name);
             formData.append("quantity", "1");
             formData.append("link_booster", link_booster);
-            formData.append("country_id", country_id);
-
+            if (featureType === "country") {
+                country_ids.forEach(id => formData.append("country_id[]", id));
+            } else {
+                formData.append("country_id", "248");
+            }
             const res = await fetch("/api/make-feature-listing", {
                 method: "POST",
                 body: formData,
@@ -329,40 +330,44 @@ const MySubmittedLinks: React.FC = () => {
                         <h2 className="text-xl font-bold mb-4 text-blue-700">
                             {t("MFL")}
                         </h2>
-                        <div className="mb-4 text-gray-800 text-base">
+                        <div className="mb-4 text-gray-800 text-base text-left">
                             <span className="font-semibold">
-                                {t("MLFLO")} {featureDuration} {t("DAY")}
-                                {featureDuration !== "1" ? "s" : ""} {t("DSFO")}
-                                <br />1 {t("TKTH")} {t("WTD")}
+                                Make this listing as features listing for {featureDuration} week
+                                {featureDuration !== "1" ? "s" : ""} and stand out from others.
+                                1 ticket will be deducted from your available Ticket Quota.
                             </span>
                         </div>
                         <div className="mb-4 text-left">
-                            <span className="font-semibold">{t("SLT")}</span>
-                            <div className="flex items-center gap-6 mt-2">
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="featureType"
-                                        value="country"
-                                        checked={featureType === "country"}
-                                        onChange={() =>
-                                            setFeatureType("country")
-                                        }
-                                    />
-                                    {t("CFL")}
-                                </label>
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="featureType"
-                                        value="global"
-                                        checked={featureType === "global"}
-                                        onChange={() =>
-                                            setFeatureType("global")
-                                        }
-                                    />
-                                    {t("GFL")}
-                                </label>
+                            <div className="p-4 border rounded-lg bg-gray-100">
+                                <span className="font-semibold block mb-2 text-center">
+                                    {"Select the type of feature listing"}
+                                </span>
+                                <div className="flex items-center gap-6">
+                                    <label className="flex items-center gap-2">
+                                        <input
+                                            type="radio"
+                                            name="featureType"
+                                            value="country"
+                                            checked={featureType === "country"}
+                                            onChange={() =>
+                                                setFeatureType("country")
+                                            }
+                                        />
+                                        {t("CFL")}
+                                    </label>
+                                    <label className="flex items-center gap-2">
+                                        <input
+                                            type="radio"
+                                            name="featureType"
+                                            value="global"
+                                            checked={featureType === "global"}
+                                            onChange={() =>
+                                                setFeatureType("global")
+                                            }
+                                        />
+                                        {t("GFL")}
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         {featureType === "country" && (
@@ -370,27 +375,28 @@ const MySubmittedLinks: React.FC = () => {
                                 <label className="block mb-1 font-medium text-gray-700">
                                     {t("SC")}
                                 </label>
-                                <select
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-700 appearance-none bg-white mb-4"
-                                    value={selectedCountry}
-                                    onChange={(e) =>
-                                        setSelectedCountry(e.target.value)
-                                    }
-                                >
-                                    <option value="">{t("SC")}</option>
+                                <div className="max-h-48 overflow-y-auto border rounded-lg p-2 bg-white mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                     {countries
                                         .filter((c) => c.country_id !== "248")
                                         .map((c) => (
-                                            <option
-                                                key={c.country_id}
-                                                value={c.country_id}
-                                            >
-                                                {c.country_name} (Max:{" "}
-                                                {c.register_allow}, Avai:{" "}
-                                                {c.allow})
-                                            </option>
+                                            <label key={c.country_id} className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    value={c.country_id}
+                                                    checked={selectedCountries.includes(c.country_id)}
+                                                    onChange={e => {
+                                                        if (e.target.checked) {
+                                                            setSelectedCountries(prev => [...prev, c.country_id]);
+                                                        } else {
+                                                            setSelectedCountries(prev => prev.filter(id => id !== c.country_id));
+                                                        }
+                                                    }}
+                                                />
+                                                <span>{c.country_name} (Max: {c.register_allow}, Avai: {c.allow})</span>
+                                            </label>
                                         ))}
-                                </select>
+                                </div>
+                                <div className="text-xs text-gray-500 mb-2">You can select multiple countries.</div>
                             </div>
                         )}
                         <div className="mt-4 flex justify-between gap-4">
@@ -503,14 +509,14 @@ const MySubmittedLinks: React.FC = () => {
                                                     className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${getStatusText(
                                                         link.sl_status
                                                     ) === t("APPROVED")
-                                                            ? "bg-green-100 text-green-800 border border-green-200"
-                                                            : getStatusText(
-                                                                link.sl_status
-                                                            ) === t(
-                                                                "PENDING"
-                                                            )
-                                                                ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
-                                                                : "bg-red-100 text-red-800 border border-red-200"
+                                                        ? "bg-green-100 text-green-800 border border-green-200"
+                                                        : getStatusText(
+                                                            link.sl_status
+                                                        ) === t(
+                                                            "PENDING"
+                                                        )
+                                                            ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
+                                                            : "bg-red-100 text-red-800 border border-red-200"
                                                         }`}
                                                 >
                                                     {getStatusText(

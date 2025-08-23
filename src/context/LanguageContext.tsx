@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 // Type for the language dictionary
 export type LanguageDict = Record<string, string>;
@@ -29,12 +29,12 @@ export const useLanguage = () => useContext(LanguageContext);
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   // display name (used by UI)
   const [language, setLanguageState] = useState<string>(() => {
-    return typeof window !== "undefined" ? (localStorage.getItem("language") || "HK") : "HK";
+    return typeof window !== "undefined" ? (localStorage.getItem("language") || "EN") : "EN";
   });
 
   // l_key is the key used to fetch translations
   const [l_key, setLKeyState] = useState<string>(() => {
-    return typeof window !== "undefined" ? (localStorage.getItem("l_key") || "HK") : "HK";
+    return typeof window !== "undefined" ? (localStorage.getItem("l_key") || "EN") : "EN";
   });
 
   const [dict, setDict] = useState<LanguageDict>({});

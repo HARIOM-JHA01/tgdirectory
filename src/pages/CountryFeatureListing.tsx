@@ -51,7 +51,9 @@ const CountryFeatureListing: React.FC = () => {
                         })
                     );
                 setCountries(mapped);
-                if (mapped.length) setSelectedCountry(mapped[0]);
+                // Set default country to country_id '98' if it exists, else first
+                const defaultCountry: Country | undefined = mapped.find((c: Country) => c.id === '98') || mapped[0];
+                if (defaultCountry) setSelectedCountry(defaultCountry);
             } catch {
                 setCountries([]);
             }
@@ -137,8 +139,8 @@ const CountryFeatureListing: React.FC = () => {
                                             setDropdownOpen(false);
                                         }}
                                         className={`w-full text-left px-4 py-3 hover:bg-gray-50 ${selectedCountry?.id === c.id
-                                                ? "bg-blue-50 text-blue-600"
-                                                : "text-gray-800"
+                                            ? "bg-blue-50 text-blue-600"
+                                            : "text-gray-800"
                                             }`}
                                     >
                                         {c.name}
