@@ -7,6 +7,7 @@ import profileIcon from '../../assets/profile.png'
 import LanguageSelector from './LanguageSelector'
 import { LanguageItem } from '../../types/types';
 import { Link, Star, Ticket, Clock, Send } from "lucide-react";
+import { useLanguage } from '../../context/LanguageContext';
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -29,6 +30,7 @@ function Header() {
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   // Handle language selection
   const handleLanguageSelect = (language: LanguageItem) => {
@@ -86,27 +88,27 @@ function Header() {
                   >
                     <MenuItem
                       icon={<Send size={16} />}
-                      text="Submit New Link"
+                      text={t('SUBMIT')}
                       onClick={() => handleMenuItemClick('/submit-link')}
                     />
                     <MenuItem
                       icon={<Link size={16} />}
-                      text="My Submitted Links"
+                      text={t('SLINK')}
                       onClick={() => handleMenuItemClick('/my-submitted-links')}
                     />
                     <MenuItem
                       icon={<Star size={16} />}
-                      text="My Feature Listing"
+                      text={t('MYFL')}
                       onClick={() => handleMenuItemClick('/my-feature-listing')}
                     />
                     <MenuItem
                       icon={<Ticket size={16} />}
-                      text="Buy Tickets"
+                      text={t('BUYTIKIT')}
                       onClick={() => handleMenuItemClick('/buy-tickets')}
                     />
                     <MenuItem
                       icon={<Clock size={16} />}
-                      text="Ticket History"
+                      text={t('TKTH')}
                       onClick={() => handleMenuItemClick('/ticket-history')}
                     />
                   </div>
