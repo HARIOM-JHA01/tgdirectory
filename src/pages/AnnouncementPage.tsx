@@ -17,7 +17,7 @@ const AnnouncementPage: React.FC = () => {
             setLoading(true);
             try {
                 const res = await fetch(
-                    "https://telegramdirectory.org/api/get-notice-announcement"
+                    "/api/get-notice-announcement"
                 );
                 const data = await res.json();
                 setAnnouncements(data.result || []);

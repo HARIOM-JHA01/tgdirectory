@@ -17,7 +17,7 @@ const FeaturedChannels: React.FC = () => {
     const fetchChannels = async () => {
       setLoading(true);
       try {
-        const res = await fetch('https://telegramdirectory.org/api/top-submit-list-new');
+        const res = await fetch('/api/top-submit-list-new');
         const data = await res.json();
         setChannels(data.dataArr || []);
       } catch (err) {

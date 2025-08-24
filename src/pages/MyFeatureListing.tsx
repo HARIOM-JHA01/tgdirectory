@@ -46,7 +46,7 @@ const MyFeatureListing: React.FC = () => {
                     (opt) => opt.label === filterType
                 );
                 const statusParam = selectedOption?.value ?? "";
-                const url = `https://telegramdirectory.org/api/en/my-feature-list?telegram_id=${telegramId}&status=${statusParam}`;
+                const url = `/api/en/my-feature-list?telegram_id=${telegramId}&status=${statusParam}`;
                 const response = await axios.get(url, {
                     headers: {
                         Cookie: "ci_session_frontend=dnlf4sf5bs367ijtjf8qek2i92965ljq",
@@ -67,7 +67,7 @@ const MyFeatureListing: React.FC = () => {
     useEffect(() => {
         const fetchFeatureListings = async () => {
             try {
-                const url = `https://telegramdirectory.org/api/en/my-feature-list?telegram_id=${telegramId}&status=3`;
+                const url = `/api/en/my-feature-list?telegram_id=${telegramId}&status=3`;
                 const response = await fetch(url);
                 const data = await response.json();
                 setListings(data.dataArr || []);

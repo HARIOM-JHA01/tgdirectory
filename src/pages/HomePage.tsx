@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
         });
 
         // Fetch link count from API
-        fetch("https://telegramdirectory.org/api/get-link-count")
+        fetch("/api/get-link-count")
             .then((res) => res.json())
             .then((data) => {
                 setLinkCount(data.generate_id);
@@ -45,9 +45,9 @@ const HomePage: React.FC = () => {
                 {/* Search Field */}
                 <div className="px-4 pb-4">
                     <div className="max-w-2xl mx-auto bg-white">
-                        <p className="text-lg text-center font-mono font-semibold text-blue-800">
+                        {/* <p className="text-lg text-center font-mono font-semibold text-blue-800">
                             {t("ULS")}
-                        </p>
+                        </p> */}
                         <div className="w-full rounded-lg text-blue-800 text-center text-lg font-mono py-2">
                             {linkCount}
                         </div>

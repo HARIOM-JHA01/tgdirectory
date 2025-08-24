@@ -219,7 +219,7 @@ const SearchLink: React.FC = () => {
                                     <button
                                         onClick={async () => {
                                             const typeParam = selectedType === "Channel" ? 1 : 0;
-                                            const shareUrl = `https://telegramdirectory.org/en/search?isSearch=1&type=${typeParam}&tag=${encodeURIComponent(tag)}`;
+                                            const shareUrl = `https://twa.bonusforyou.org/tgdirectory/search-link?isSearch=1&type=${typeParam}&tag=${encodeURIComponent(tag)}`;
                                             if (navigator.share) {
                                                 try {
                                                     await navigator.share({
