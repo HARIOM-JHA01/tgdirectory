@@ -63,7 +63,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setLoading(true);
     // Use l_key for fetching language content
-    fetch(`/api/${l_key}/getDBLanguage`)
+    fetch(`/api/${l_key}/getDBLanguage?cb=${Date.now()}`)
       .then((res) => res.json())
       .then((data) => setDict(data.language || {}))
       .catch(() => setDict({}))

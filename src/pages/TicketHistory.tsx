@@ -169,11 +169,22 @@ const TicketHistory: React.FC = () => {
                                             ] || item.payment_type}
                                         </td>
                                         <td className="p-3 border border-gray-300 text-center bg-white">
-                                            {item.transcation_date}
+                                            {new Date(item.transcation_date).toLocaleDateString("en-GB")}
                                         </td>
                                         <td className="p-3 border border-gray-300 text-center bg-white">
-                                            {statusMap[item.status] ||
-                                                item.status}
+                                            <span
+                                                className={`px-2 py-1 rounded-full text-white text-sm font-medium ${item.status === "1"
+                                                        ? "bg-green-500"
+                                                        : item.status === "0"
+                                                            ? "bg-yellow-500"
+                                                            : "bg-red-500"
+                                                    }`}
+                                            >
+                                                {statusMap[item.status] ||
+                                                    (item.status === "2"
+                                                        ? "Rejected"
+                                                        : item.status)}
+                                            </span>
                                         </td>
                                     </tr>
                                 ))

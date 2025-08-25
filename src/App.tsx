@@ -253,7 +253,7 @@ function App() {
                         }}
                         disabled={deletingUser}
                     >
-                        {deletingUser ? "Deleting..." : "Delete web Account"}
+                        {deletingUser ? "Deleting..." : "Delete and Reopen"}
                     </button>
                     <button
                         className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg text-base transition"
