@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { telegramId } from "../utils/telegramUtils";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "../context/useLanguage";
 
 type SubmittedLink = {
     id: string;
@@ -57,7 +57,7 @@ const MySubmittedLinks: React.FC = () => {
     const [editErrors, setEditErrors] = useState<Record<string, string>>({});
 
     const navigate = useNavigate();
-    const { t } = useLanguage();
+    const { t, l_key } = useLanguage();
 
     const handleMyFeatureListing = () => {
         navigate("/my-feature-listing");
@@ -69,7 +69,7 @@ const MySubmittedLinks: React.FC = () => {
         setViewLoading(true);
         setShowViewPopup(true);
         try {
-            const res = await fetch(`/api/en/view-list?link_id=${linkObj.id}`, {
+            const res = await fetch(`/api/${l_key.toLowerCase()}/view-list?link_id=${linkObj.id}`, {
                 credentials: "include",
             });
             const data = await res.json();
@@ -91,7 +91,7 @@ const MySubmittedLinks: React.FC = () => {
         try {
             const formData = new FormData();
             formData.append("submit_link_id", viewDetails.id);
-            await fetch("/api/en/delete", {
+            await fetch(`/api/${l_key.toLowerCase()}/delete`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -144,7 +144,7 @@ const MySubmittedLinks: React.FC = () => {
                     editForm[`sl_tag_${i}` as keyof ViewLinkDetails] || ""
                 );
             }
-            const res = await fetch("/api/en/submit-link", {
+            const res = await fetch(`/api/${l_key.toLowerCase()}/submit-link`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -170,7 +170,7 @@ const MySubmittedLinks: React.FC = () => {
                         : l
                 )
             );
-        } catch (err: any) {
+        } catch (err: unknown) {
             // Try to extract API error message if possible
             if (err instanceof Response) {
                 try {
@@ -179,8 +179,8 @@ const MySubmittedLinks: React.FC = () => {
                 } catch {
                     setEditErrors({ form: t("FAILED_UPDATE") });
                 }
-            } else if (err?.message) {
-                setEditErrors({ form: err.message });
+            } else if (typeof err === 'object' && err !== null && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
+                setEditErrors({ form: (err as { message: string }).message });
             } else {
                 setEditErrors({ form: t("FAILED_UPDATE") });
             }
@@ -192,7 +192,7 @@ const MySubmittedLinks: React.FC = () => {
         const fetchSubmittedLinks = async () => {
             try {
                 const response = await axios.get(
-                    `/api/en/submit-list?telegram_id=${telegramId}`,
+                    `/api/${l_key.toLowerCase()}/submit-list?telegram_id=${telegramId}`,
                     {
                         headers: {
                             Cookie: "ci_session_frontend=a7booq7io5b88ghqll4va8gkvblvgb1i",
@@ -206,7 +206,7 @@ const MySubmittedLinks: React.FC = () => {
         };
 
         fetchSubmittedLinks();
-    }, []);
+    }, [l_key]);
     useEffect(() => {
         if (showFeaturePopup) {
             // Fetch feature duration (weeks/days)

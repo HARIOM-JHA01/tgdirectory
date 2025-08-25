@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import BannerCarousel from "../components/TopBannerCarousel";
 import tgdcBanner from "../assets/tgdc.jpg";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "../context/useLanguage";
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();

@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import TopBannerCarousel from "../components/TopBannerCarousel";
 import BottomBannerCarousel from "../components/BottomBannerCarousel";
 import WebApp from "@twa-dev/sdk";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "../context/useLanguage";
 
 const SearchLink: React.FC = () => {
     const [selectedType, setSelectedType] = useState<"Group" | "Channel">(
@@ -11,7 +11,7 @@ const SearchLink: React.FC = () => {
     );
     const [tag, setTag] = useState("");
     const [carouselIndex, setCarouselIndex] = useState(0);
-    const { t } = useLanguage();
+    const { t, l_key } = useLanguage();
     interface SearchResult {
         id: string;
         sl_type: string; // '0' for group, '1' for channel
@@ -39,7 +39,7 @@ const SearchLink: React.FC = () => {
         const typeParam = selectedType === "Channel" ? 1 : 0;
         try {
             const response = await fetch(
-                `/api/en/search?isSearch=1&type=${typeParam}&tag=${encodeURIComponent(
+                `/api/${l_key.toLowerCase()}/search?isSearch=1&type=${typeParam}&tag=${encodeURIComponent(
                     tag
                 )}`,
                 {

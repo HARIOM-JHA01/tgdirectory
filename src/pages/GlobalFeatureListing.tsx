@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import { ApiChannel } from "../types/types";
 import TopBannerCarousel from "../components/TopBannerCarousel";
+import { useLanguage } from "../context/useLanguage";
 
 const GlobalFeatureListing: React.FC = () => {
     const [channels, setChannels] = useState<ApiChannel[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [visibleCount, setVisibleCount] = useState(5);
+    const { l_key } = useLanguage();
 
     useEffect(() => {
         const fetchChannels = async () => {
@@ -15,7 +17,7 @@ const GlobalFeatureListing: React.FC = () => {
             setError(null);
             try {
                 const response = await fetch(
-                    "/api/en/global-feature-link-list/?country_id=248",
+                    `/api/${l_key.toLowerCase()}/global-feature-link-list/?country_id=248`,
                     {
                         headers: {
                             Cookie: "ci_session_frontend=lmt4a7p2v6piqcob56f9ntt1hkrm1ei3",
@@ -33,7 +35,7 @@ const GlobalFeatureListing: React.FC = () => {
             }
         };
         fetchChannels();
-    }, []);
+    }, [l_key]);
 
     const handleVisitChannel = (username: string) => {
         window.open(`https://t.me/${username}`, "_blank");

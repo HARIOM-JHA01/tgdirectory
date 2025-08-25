@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import TopBannerCarousel from "../components/TopBannerCarousel";
+import { useLanguage } from "../context/useLanguage";
 
 interface Country {
     id: string;
@@ -25,6 +26,7 @@ const CountryFeatureListing: React.FC = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const CI_COOKIE = "ci_session_frontend=lmt4a7p2v6piqcob56f9ntt1hkrm1ei3";
+    const { l_key } = useLanguage();
 
     useEffect(() => {
         async function fetchCountries() {
@@ -67,7 +69,7 @@ const CountryFeatureListing: React.FC = () => {
             setLoading(true);
             try {
                 const res = await fetch(
-                    `/api/en/global-feature-link-list/?country_id=${selectedCountry.id}`,
+                    `/api/${l_key.toLowerCase()}/global-feature-link-list/?country_id=${selectedCountry.id}`,
                     {
                         headers: { Cookie: CI_COOKIE },
                         credentials: "include",
@@ -97,7 +99,7 @@ const CountryFeatureListing: React.FC = () => {
             setLoading(false);
         }
         fetchChannels();
-    }, [selectedCountry]);
+    }, [selectedCountry, l_key]);
 
     return (
         <Layout>

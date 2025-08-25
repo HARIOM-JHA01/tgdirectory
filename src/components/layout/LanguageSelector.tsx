@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LanguageItem } from '../../types/types';
 import languageIcon from '../../assets/language.png';
 import Logo from '../../assets/tgd-logo.png';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 
 interface LanguageSelectorProps {
   onLanguageSelect?: (language: LanguageItem) => void;

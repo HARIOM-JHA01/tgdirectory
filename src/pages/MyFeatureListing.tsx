@@ -3,6 +3,7 @@ import Layout from "../components/layout/Layout";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { telegramId } from "../utils/telegramUtils";
+import { useLanguage } from "../context/useLanguage";
 
 type FilterType =
     | "All features listing"
@@ -32,6 +33,7 @@ const filterOptions: { label: FilterType; value: string }[] = [
 
 const MyFeatureListing: React.FC = () => {
     const navigate = useNavigate();
+    const { l_key } = useLanguage();
     const [filterType, setFilterType] = useState<FilterType>(
         "All features listing"
     );
@@ -46,7 +48,7 @@ const MyFeatureListing: React.FC = () => {
                     (opt) => opt.label === filterType
                 );
                 const statusParam = selectedOption?.value ?? "";
-                const url = `/api/en/my-feature-list?telegram_id=${telegramId}&status=${statusParam}`;
+                const url = `/api/${l_key.toLowerCase()}/my-feature-list?telegram_id=${telegramId}&status=${statusParam}`;
                 const response = await axios.get(url, {
                     headers: {
                         Cookie: "ci_session_frontend=dnlf4sf5bs367ijtjf8qek2i92965ljq",
@@ -62,12 +64,12 @@ const MyFeatureListing: React.FC = () => {
 
         fetchUserIdAndListings();
         setVisibleCount(5); // Reset count on filter change
-    }, [filterType]);
+    }, [filterType, l_key]);
 
     useEffect(() => {
         const fetchFeatureListings = async () => {
             try {
-                const url = `/api/en/my-feature-list?telegram_id=${telegramId}&status=3`;
+                const url = `/api/${l_key.toLowerCase()}/my-feature-list?telegram_id=${telegramId}&status=3`;
                 const response = await fetch(url);
                 const data = await response.json();
                 setListings(data.dataArr || []);
@@ -80,7 +82,7 @@ const MyFeatureListing: React.FC = () => {
         };
         fetchFeatureListings();
         setVisibleCount(5);
-    }, []);
+    }, [l_key]);
 
     const filteredListings = (): FeatureListing[] => listings;
 

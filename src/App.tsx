@@ -13,6 +13,7 @@ import TicketHistory from "./pages/TicketHistory";
 import FeaturedChannels from "./pages/FeaturedChannels";
 import AnnouncementPage from "./pages/AnnouncementPage";
 import TicketQuota from "./pages/TicketQuota";
+import { useLanguage } from "./context/useLanguage";
 
 const BOT_TOKEN = "7207272180:AAE8AY94WPGRNY_m4s8lw6qeDRZGZCNmwwE";
 const CHANNEL_NAME = "@TGDirectories";
@@ -21,61 +22,43 @@ function App() {
     const [showWelcome, setShowWelcome] = useState(false);
     const [showUsernameExistPopup, setShowUsernameExistPopup] = useState(false);
     const [deletingUser, setDeletingUser] = useState(false);
-    // Removed unused telegramId state
+    const { l_key } = useLanguage();
+    const [canLogin, setCanLogin] = useState(false);
 
+    // 1) Membership check on mount only
     useEffect(() => {
         WebApp.ready();
 
         const user = WebApp.initDataUnsafe?.user;
-        const telegramId = user?.id; // Use this variable directly where needed
+        const telegramId = user?.id;
         const username = user?.username || "";
-        // Check for username first
         if (!username) {
             WebApp.showAlert("You do not have a username for your telegram account. Please set a username before using this app.", () => {
                 WebApp.close();
             });
             return;
         }
-        // const telegramId = "1882287904";
-        // const username = "hariomjha01";
+
         const checkMembership = async () => {
             try {
                 const response = await fetch(
                     `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CHANNEL_NAME}&user_id=${telegramId}`
                 );
                 const data = await response.json();
-                console.log(data);
-
-                if (
-                    data?.ok &&
-                    ["member", "administrator", "creator"].includes(
-                        data.result.status
-                    )
-                ) {
-                    console.log("User has joined the channel");
-                    // allow access to mini app
-                    await loginToMiniApp();
+                if (data?.ok && ["member", "administrator", "creator"].includes(data.result.status)) {
+                    setCanLogin(true);
                 } else {
                     const params = {
                         title: "Join our Channel",
                         message:
                             "To use this app, you need to join our official Telegram channel for access.\n\nClick the button below to join, then return to the app.",
                         buttons: [
-                            {
-                                id: "close",
-                                text: "Close App",
-                                type: "destructive" as const,
-                            },
-                            {
-                                id: "join",
-                                text: "Join Channel",
-                                type: "default" as const,
-                            },
+                            { id: "close", text: "Close App", type: "destructive" as const },
+                            { id: "join", text: "Join Channel", type: "default" as const },
                         ],
                     };
                     WebApp.showPopup(params, (buttonId) => {
                         if (buttonId === "join") {
-                            // Show a custom modal with a clickable hyperlink (styled as a real popup)
                             const modal = document.createElement("div");
                             modal.style.position = "fixed";
                             modal.style.top = "0";
@@ -101,21 +84,14 @@ function App() {
                 <style>@keyframes popup-fade-in { from { opacity: 0; transform: scale(0.95);} to { opacity: 1; transform: scale(1);} }</style>
               `;
                             document.body.appendChild(modal);
-                            document
-                                .getElementById("close-modal-btn")
-                                ?.addEventListener("click", () => {
-                                    document.body.removeChild(modal);
-                                    WebApp.close();
-                                });
-                            document
-                                .getElementById("join-channel-btn")
-                                ?.addEventListener("click", () => {
-                                    window.location.href =
-                                        "https://t.me/TGDirectories";
-                                    setTimeout(() => {
-                                        WebApp.close();
-                                    }, 300);
-                                });
+                            document.getElementById("close-modal-btn")?.addEventListener("click", () => {
+                                document.body.removeChild(modal);
+                                WebApp.close();
+                            });
+                            document.getElementById("join-channel-btn")?.addEventListener("click", () => {
+                                window.location.href = "https://t.me/TGDirectories";
+                                setTimeout(() => { WebApp.close(); }, 300);
+                            });
                         }
                         if (buttonId === "close") {
                             WebApp.close();
@@ -130,6 +106,17 @@ function App() {
                 WebApp.close();
             }
         };
+
+        checkMembership();
+    }, []);
+
+    // 2) Login when language key changes AND membership has passed
+    useEffect(() => {
+        if (!canLogin) return;
+        const user = WebApp.initDataUnsafe?.user;
+        const telegramId = user?.id;
+        const username = user?.username || "";
+        if (!username) return; // extra guard
 
         const loginToMiniApp = async () => {
             let country_name = "";
@@ -148,7 +135,7 @@ function App() {
             formData.append("login_ju_telegram_username", username || "");
             formData.append("country_id", country_name);
 
-            const response = await fetch(`/api/en/tg-login`, {
+            const response = await fetch(`/api/${l_key.toLowerCase()}/tg-login`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -158,7 +145,7 @@ function App() {
                 WebApp.showAlert("Login failed. Please try again.");
                 return;
             }
-            let data = null;
+            let data: { is_username_exist?: number; is_first?: number } | null = null;
             try {
                 const text = await response.text();
                 data = text ? JSON.parse(text) : {};
@@ -166,18 +153,17 @@ function App() {
                 console.error("Failed to parse login response as JSON", e);
                 data = {};
             }
-            console.log("Login response:", data);
-            if (data.is_username_exist === 1) {
+            if (data && data.is_username_exist === 1) {
                 setShowUsernameExistPopup(true);
                 return;
             }
-            if (data.is_first === 1) {
+            if (data && data.is_first === 1) {
                 setShowWelcome(true);
             }
         };
-        checkMembership();
+
         loginToMiniApp();
-    }, []);
+    }, [l_key, canLogin]);
 
     // Custom Welcome Card
     const WelcomeCard = () => (

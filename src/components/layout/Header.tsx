@@ -7,7 +7,7 @@ import profileIcon from '../../assets/profile.png'
 import LanguageSelector from './LanguageSelector'
 import { LanguageItem } from '../../types/types';
 import { Link, Star, Ticket, Clock, Send } from "lucide-react";
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from '../../context/useLanguage';
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -70,13 +70,13 @@ function Header() {
           {/* Left side icons */}
           <div className="flex items-center space-x-4">
             <div className="relative" ref={menuRef}>
-              <div 
+              <div
                 className="flex items-center justify-center cursor-pointer"
                 onClick={toggleProfileMenu}
               >
                 <img src={profileIcon} alt="Profile" className="w-8 h-8" />
               </div>
-              
+
               {/* Profile Menu Dropdown */}
               {profileMenuOpen && (
                 <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
@@ -115,27 +115,27 @@ function Header() {
                 </div>
               )}
             </div>
-            <div 
+            <div
               className="flex items-center justify-center cursor-pointer"
-              onClick={() => {navigate('/announcement')}}
+              onClick={() => { navigate('/announcement') }}
             >
               <img src={announcementIcon} alt="Announcement" className="w-8 h-8" />
             </div>
           </div>
-          
+
           {/* Center TGD Logo (1.5x size) */}
-          <div 
+          <div
             className="flex items-center justify-center cursor-pointer"
-            onClick={() => {navigate('/')}}
+            onClick={() => { navigate('/') }}
           >
             <img src={tgdLogo} alt="TG Directory" className="w-12 h-12" />
           </div>
-          
+
           {/* Right side icons */}
           <div className="flex items-center space-x-4">
-            <div 
+            <div
               className="flex items-center justify-center cursor-pointer"
-              onClick={() => {navigate('/featured-channels')}}
+              onClick={() => { navigate('/featured-channels') }}
             >
               <img src={newIcon} alt="New" className="w-8 h-8" />
             </div>

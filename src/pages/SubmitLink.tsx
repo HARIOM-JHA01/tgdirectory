@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import TopBannerCarousel from "../components/TopBannerCarousel";
 import { telegramId } from "../utils/telegramUtils";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "../context/useLanguage";
 import { useNavigate } from "react-router-dom";
 
 const SuccessModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
@@ -110,7 +110,7 @@ const SubmitLink: React.FC = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const userId = telegramId;
     const router = useNavigate();
-    const { t } = useLanguage();
+    const { t, l_key } = useLanguage();
 
     useEffect(() => {
         const fetchLanguages = async () => {
@@ -160,7 +160,7 @@ const SubmitLink: React.FC = () => {
             formData.append("sl_tag_6", tags[5]);
             formData.append("telegram_id", userId?.toString() || "");
 
-            const res = await fetch("/api/en/submit-link", {
+            const res = await fetch(`/api/${l_key.toLowerCase()}/submit-link`, {
                 method: "POST",
                 body: formData,
             });

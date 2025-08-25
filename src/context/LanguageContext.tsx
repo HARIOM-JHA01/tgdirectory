@@ -1,35 +1,10 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
-// Type for the language dictionary
-export type LanguageDict = Record<string, string>;
-
-// Context props
-interface LanguageContextProps {
-  language: string;
-  l_key: string;
-  setLanguage: (lang: string) => void;
-  setLKey: (key: string) => void;
-  dict: LanguageDict;
-  t: (key: string) => string;
-  loading: boolean;
-}
-
-const LanguageContext = createContext<LanguageContextProps>({
-  language: "English",
-  l_key: "HK",
-  setLanguage: () => { },
-  setLKey: () => { },
-  dict: {},
-  t: (key) => key,
-  loading: false,
-});
-
-export const useLanguage = () => useContext(LanguageContext);
+import { useState, useEffect, ReactNode } from "react";
+import { LanguageContext, LanguageDict } from "./I18nContext";
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   // display name (used by UI)
   const [language, setLanguageState] = useState<string>(() => {
-    return typeof window !== "undefined" ? (localStorage.getItem("language") || "EN") : "EN";
+    return typeof window !== "undefined" ? (localStorage.getItem("language") || "English") : "English";
   });
 
   // l_key is the key used to fetch translations
@@ -39,6 +14,14 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   const [dict, setDict] = useState<LanguageDict>({});
   const [loading, setLoading] = useState(false);
+
+  interface LanguageData {
+    l_key: string;
+    m_key: string;
+    message: string;
+  }
+
+  const [allLanguageData, setAllLanguageData] = useState<LanguageData[]>([]);
 
   // update persisted display name
   const setLanguage = (lang: string) => {
@@ -60,15 +43,28 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Fetch all language data on mount
   useEffect(() => {
     setLoading(true);
-    // Use l_key for fetching language content
-    fetch(`/api/${l_key}/getDBLanguage?cb=${Date.now()}`)
+    fetch("https://telegramdirectory.org/api/getAllLanguageDB")
       .then((res) => res.json())
-      .then((data) => setDict(data.language || {}))
-      .catch(() => setDict({}))
+      .then((data: LanguageData[]) => {
+        setAllLanguageData(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setAllLanguageData([]))
       .finally(() => setLoading(false));
-  }, [l_key]);
+  }, []);
+
+  // Update dict when l_key or allLanguageData changes
+  useEffect(() => {
+    if (!allLanguageData.length) return;
+    const filtered = allLanguageData.filter((item) => item.l_key === l_key);
+    const dictObj: LanguageDict = {};
+    filtered.forEach((item) => {
+      dictObj[item.m_key] = item.message;
+    });
+    setDict(dictObj);
+  }, [l_key, allLanguageData]);
 
   const t = (key: string) => dict[key] || key;
 
