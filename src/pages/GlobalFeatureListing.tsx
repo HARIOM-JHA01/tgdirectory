@@ -86,10 +86,10 @@ const GlobalFeatureListing: React.FC = () => {
         <Layout>
             <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 flex flex-col">
                 {/* Global Featured Title - moved to top */}
-                <div className="mx-auto w-full max-w-2xl py-4 px-2">
-                    <div className="bg-blue-300 border-2 border-purple-400 p-1">
-                        <h2 className="text-center text-xl font-bold text-purple-600">
-                            Globally Featured Telegram Channels
+                <div className="mx-auto w-full max-w-2xl py-6 px-4">
+                    <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+                        <h2 className="text-center text-xl font-semibold text-gray-800">
+                            Featured Telegram Channels
                         </h2>
                     </div>
                 </div>

@@ -167,10 +167,10 @@ const CountryFeatureListing: React.FC = () => {
                             channels.map((ch) => (
                                 <div
                                     key={ch.id}
-                                    className="bg-white border border-gray-200 rounded-xl shadow-md p-4 w-full flex items-center gap-4 transition hover:shadow-lg"
+                                    className="bg-[#b3e6ff] border-2 border-[#33c3ff] rounded-xl shadow-md p-4 w-full flex items-center gap-4 transition hover:shadow-lg"
                                 >
                                     <div className="flex-shrink-0">
-                                        <div className="w-20 h-20 bg-cyan-100 rounded-lg flex items-center justify-center overflow-hidden border border-cyan-200">
+                                        <div className="w-24 h-24 bg-cyan-100 rounded-lg flex items-center justify-center overflow-hidden border border-cyan-200">
                                             {ch.avatar ? (
                                                 <img
                                                     src={ch.avatar}
@@ -179,7 +179,7 @@ const CountryFeatureListing: React.FC = () => {
                                                 />
                                             ) : (
                                                 <svg
-                                                    className="w-12 h-12 text-cyan-400"
+                                                    className="w-24 h-24 text-cyan-400"
                                                     viewBox="0 0 24 24"
                                                     fill="currentColor"
                                                 >
@@ -189,12 +189,12 @@ const CountryFeatureListing: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex-1 flex flex-col gap-2 w-full min-w-0">
-                                        <span className="font-semibold text-base text-gray-800 truncate">
-                                            {ch.name}
-                                        </span>
-                                        <p className="text-gray-600 text-sm break-words line-clamp-2">
-                                            {ch.description}
-                                        </p>
+                                        <input
+                                            type="text"
+                                            value={ch.name}
+                                            readOnly
+                                            className="font-semibold text-base text-gray-800 w-full border border-gray-200 rounded-md p-3"
+                                        />
                                         <button
                                             onClick={() =>
                                                 window.open(
@@ -206,9 +206,9 @@ const CountryFeatureListing: React.FC = () => {
                                                     "_blank"
                                                 )
                                             }
-                                            className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-white py-2 rounded-lg font-semibold text-base hover:from-cyan-500 hover:to-cyan-600 transition-all"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-md font-medium text-center transition-colors"
                                         >
-                                            Visit channel
+                                            Visit
                                         </button>
                                     </div>
                                 </div>

@@ -30,14 +30,14 @@ const FeaturedChannels: React.FC = () => {
   }, []);
 
   const renderAvatar = (channel: ApiChannel) => {
-    const defaultLogo = '/tgd-logo.png';
+    const defaultLogo = 'https://telegram.org/img/t_logo.png';
     if (channel.sl_avtar) {
       if (channel.sl_avtar.startsWith('data:image')) {
         return (
           <img
             src={channel.sl_avtar}
             alt={channel.sl_title}
-            className="w-12 h-12 rounded-lg object-cover border border-blue-300 bg-white"
+            className="w-24 h-24 rounded-lg object-cover border border-blue-300 bg-white"
             onError={e => (e.currentTarget.src = defaultLogo)}
           />
         );
@@ -47,7 +47,7 @@ const FeaturedChannels: React.FC = () => {
           <img
             src={channel.sl_avtar}
             alt={channel.sl_title}
-            className="w-12 h-12 rounded-lg object-cover border border-blue-300 bg-white"
+            className="w-24 h-24 rounded-lg object-cover border border-blue-300 bg-white"
             onError={e => (e.currentTarget.src = defaultLogo)}
           />
         );
@@ -58,7 +58,7 @@ const FeaturedChannels: React.FC = () => {
       <img
         src={defaultLogo}
         alt="TGD Logo"
-        className="w-12 h-12 rounded-lg object-cover border border-blue-300 bg-white"
+        className="w-24 h-24 rounded-lg object-cover border border-blue-300 bg-white"
       />
     );
   };
@@ -75,28 +75,26 @@ const FeaturedChannels: React.FC = () => {
           ) : channels.length === 0 ? (
             <div className="text-center py-8 text-gray-500">No featured channels found.</div>
           ) : (
-            channels.map((channel) => (
-              <div key={channel.sl_link} className="bg-white rounded-lg p-3 shadow-sm">
-                <div className="flex items-center">
-                  {/* Avatar */}
-                  {renderAvatar(channel)}
-                  {/* Name and input field */}
-                  <div className="ml-3 flex-1">
-                    <input
-                      type="text"
-                      readOnly
-                      value={channel.sl_title}
-                      className="w-full border border-gray-300 rounded-md p-2 text-gray-700"
-                    />
-                  </div>
-                </div>
-                {/* Visit Channel Button */}
-                <div className="mt-2">
+            channels.map((channel, idx) => (
+              <div
+                key={idx}
+                className="bg-[#b3e6ff] border-2 border-[#33c3ff] rounded-xl p-3 flex flex-row items-center space-x-4 w-full overflow-x-auto"
+              >
+                {/* Avatar on the left */}
+                {renderAvatar(channel)}
+                {/* Channel Info on the right */}
+                <div className="flex-1 flex flex-col gap-2 w-full">
+                  <input
+                    type="text"
+                    value={channel.sl_title}
+                    readOnly
+                    className="bg-white border border-blue-200 rounded-md px-3 py-2 text-lg font-normal text-gray-700 focus:outline-none cursor-default w-full min-w-0"
+                  />
                   <a
                     href={`https://t.me/${channel.sl_link}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full bg-blue-500 text-white text-center py-2 rounded-md font-medium"
+                    className="bg-[#00aaff] hover:bg-[#0099dd] text-white rounded-md py-2 text-lg font-normal transition-colors w-full text-center"
                   >
                     Visit Channel
                   </a>

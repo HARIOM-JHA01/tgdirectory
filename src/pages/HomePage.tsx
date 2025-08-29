@@ -109,6 +109,18 @@ const HomePage: React.FC = () => {
                     >
                         {t("GFL")}
                     </button>
+                    <button
+                        onClick={() => {
+                            window.location.href = "https://telegramdirectory.org/en/home";
+                            setTimeout(() => {
+                                document.querySelector(".poster-modal")?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+                            }, 1500);
+                        }}
+                        className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white py-3 rounded-lg text-base font-semibold"
+                    >
+                        {t("PO")}
+                    </button>
+
                 </div>
             </div>
         </Layout>

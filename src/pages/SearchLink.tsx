@@ -7,7 +7,7 @@ import { useLanguage } from "../context/useLanguage";
 
 const SearchLink: React.FC = () => {
     const [selectedType, setSelectedType] = useState<"Group" | "Channel">(
-        "Group"
+        "Channel"
     );
     const [tag, setTag] = useState("");
     const [carouselIndex, setCarouselIndex] = useState(0);
@@ -92,15 +92,6 @@ const SearchLink: React.FC = () => {
                 <div className="px-4 pt-4">
                     <div className="flex bg-white rounded-lg overflow-hidden border border-gray-300">
                         <button
-                            className={`flex-1 py-3 text-center ${selectedType === "Group"
-                                ? "bg-blue-500 text-white"
-                                : "text-gray-700"
-                                }`}
-                            onClick={() => setSelectedType("Group")}
-                        >
-                            {t("GU")}
-                        </button>
-                        <button
                             className={`flex-1 py-3 text-center ${selectedType === "Channel"
                                 ? "bg-blue-500 text-white"
                                 : "text-gray-700"
@@ -108,6 +99,15 @@ const SearchLink: React.FC = () => {
                             onClick={() => setSelectedType("Channel")}
                         >
                             {t("CH")}
+                        </button>
+                        <button
+                            className={`flex-1 py-3 text-center ${selectedType === "Group"
+                                ? "bg-blue-500 text-white"
+                                : "text-gray-700"
+                                }`}
+                            onClick={() => setSelectedType("Group")}
+                        >
+                            {t("GU")}
                         </button>
                     </div>
                 </div>

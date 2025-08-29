@@ -94,7 +94,7 @@ const Tag: React.FC<TagProps> = ({ number, value, onChange, error }) => {
 
 const SubmitLink: React.FC = () => {
     const [selectedType, setSelectedType] = useState<"Group" | "Channel">(
-        "Group"
+        "Channel"
     );
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -219,15 +219,6 @@ const SubmitLink: React.FC = () => {
                 <div className="px-4 pt-4">
                     <div className="flex bg-white rounded-lg overflow-hidden border border-gray-300">
                         <button
-                            className={`flex-1 py-3 text-center ${selectedType === "Group"
-                                ? "bg-blue-500 text-white"
-                                : "text-gray-700"
-                                }`}
-                            onClick={() => setSelectedType("Group")}
-                        >
-                            {t("GU")}
-                        </button>
-                        <button
                             className={`flex-1 py-3 text-center ${selectedType === "Channel"
                                 ? "bg-blue-500 text-white"
                                 : "text-gray-700"
@@ -235,6 +226,15 @@ const SubmitLink: React.FC = () => {
                             onClick={() => setSelectedType("Channel")}
                         >
                             {t("CH")}
+                        </button>
+                        <button
+                            className={`flex-1 py-3 text-center ${selectedType === "Group"
+                                ? "bg-blue-500 text-white"
+                                : "text-gray-700"
+                                }`}
+                            onClick={() => setSelectedType("Group")}
+                        >
+                            {t("GU")}
                         </button>
                     </div>
                 </div>
