@@ -86,21 +86,19 @@ const GlobalFeatureListing: React.FC = () => {
         <Layout>
             <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 flex flex-col">
                 {/* Global Featured Title - moved to top */}
-                <div className="mx-auto w-full max-w-2xl py-6 px-4">
+                {/* <div className="mx-auto w-full max-w-2xl py-6 px-4">
                     <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
                         <h2 className="text-center text-xl font-semibold text-gray-800">
                             Featured Telegram Channels
                         </h2>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Promotional Banner - now below the title */}
-                <div className="mx-auto w-full max-w-2xl px-2">
-                    <TopBannerCarousel height="h-[150px]" />
-                </div>
+                <TopBannerCarousel height="h-[150px]" />
 
                 {/* Channel Listings */}
-                <div className="mx-auto w-full max-w-2xl mt-6 space-y-4 px-2">
+                <div className="mx-auto w-full max-w-2xl px-2">
                     {isLoading && (
                         <div className="text-center text-lg">Loading...</div>
                     )}
@@ -117,25 +115,29 @@ const GlobalFeatureListing: React.FC = () => {
                         channels.slice(0, visibleCount).map((channel, idx) => (
                             <div
                                 key={idx}
-                                className="bg-[#b3e6ff] border-2 border-[#33c3ff] rounded-xl p-3 flex flex-row items-center space-x-4 w-full overflow-x-auto"
+                                className="border-2 border-blue-300 rounded-md shadow-sm w-full flex p-2"
                             >
-                                {/* Avatar on the left */}
-                                {renderAvatar(channel)}
-                                {/* Channel Info on the right */}
-                                <div className="flex-1 flex flex-col gap-2 w-full">
+                                {/* Left Avatar Column */}
+                                <div className="flex justify-center">
+                                    <div className="w-full h-full flex items-center justify-center pr-2">
+                                        {renderAvatar(channel)}
+                                    </div>
+                                </div>
+                                {/* Right Content Column */}
+                                <div className="w-10/12 flex flex-col justify-center">
                                     <input
                                         type="text"
-                                        value={channel.sl_title}
+                                        value={` ${channel.sl_title}`}
                                         readOnly
-                                        className="bg-white border border-blue-200 rounded-md px-3 py-2 text-lg font-normal text-gray-700 focus:outline-none cursor-default w-full min-w-0"
+                                        className="w-full border-4 border-blue-300 rounded-sm mb-2 text-gray-800 font-medium"
                                     />
                                     <button
                                         onClick={() =>
                                             handleVisitChannel(channel.sl_link)
                                         }
-                                        className="bg-[#00aaff] hover:bg-[#0099dd] text-white rounded-md py-2 text-lg font-normal transition-colors w-full"
+                                        className="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-2xl font-medium transition"
                                     >
-                                        Visit Channel
+                                        Visit channel
                                     </button>
                                 </div>
                             </div>
@@ -143,13 +145,26 @@ const GlobalFeatureListing: React.FC = () => {
                 </div>
 
                 {/* Load More Button */}
-                <div className="mx-auto w-full max-w-2xl py-6 px-2">
+                <div className="mx-auto flex justify-center m-2">
                     {visibleCount < channels.length && (
                         <button
-                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-indigo-600 hover:to-purple-700 transition-all"
+                            className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:from-indigo-600 hover:to-purple-700 transition-all"
                             onClick={() => setVisibleCount((prev) => prev + 5)}
                         >
-                            Load More
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 4.5v15m7.5-7.5h-15"
+                                />
+                            </svg>
                         </button>
                     )}
                 </div>

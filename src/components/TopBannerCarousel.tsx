@@ -8,7 +8,7 @@ interface TopBannerCarouselProps {
 const API_URL = '/api/get-top-banner';
 const IMAGE_PATH = 'https://telegramdirectory.org/frontend/bannersliderimage/';
 
-const TopBannerCarousel: React.FC<TopBannerCarouselProps> = ({ height = 'h-[135px]' }) => {
+const TopBannerCarousel: React.FC<TopBannerCarouselProps> = ({ height = 'h-[150px]' }) => {
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
@@ -57,13 +57,13 @@ const TopBannerCarousel: React.FC<TopBannerCarouselProps> = ({ height = 'h-[135p
   }, [banners.length]);
 
   return (
-    <div className="px-4 pb-4">
+    <div className="px-4">
       {loading ? (
         <div className="bg-gray-200 rounded-lg p-4 flex items-center justify-center h-16">
           <p className="text-gray-600">Loading banners...</p>
         </div>
       ) : banners.length > 0 ? (
-        <div className={`relative overflow-hidden ${height}`}>
+        <div className={`relative overflow-hidden ${height || 'h-[150px]'}`}>
           {banners.map((banner, index) => (
             <a
               key={banner.id}

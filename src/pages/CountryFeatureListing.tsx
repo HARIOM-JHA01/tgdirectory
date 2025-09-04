@@ -198,7 +198,7 @@ const CountryFeatureListing: React.FC = () => {
                                     <div className="w-10/12 flex flex-col justify-center">
                                         <input
                                             type="text"
-                                            value={ch.name}
+                                            value={` ${ch.name}`}
                                             readOnly
                                             className="w-full border-4 border-blue-300 rounded-sm mb-2 text-gray-800 font-medium"
                                         />

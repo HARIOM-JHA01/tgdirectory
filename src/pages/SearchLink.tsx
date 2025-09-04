@@ -253,8 +253,8 @@ const SearchLink: React.FC = () => {
                 </div>
 
                 {/* Bottom Banner Carousel */}
-                <div className="pt-6 mt-auto">
-                    <BottomBannerCarousel height="h-[135px]" />
+                <div className="mt-auto">
+                    <BottomBannerCarousel />
                 </div>
             </div>
         </Layout>

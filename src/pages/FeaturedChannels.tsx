@@ -30,36 +30,25 @@ const FeaturedChannels: React.FC = () => {
   }, []);
 
   const renderAvatar = (channel: ApiChannel) => {
-    const defaultLogo = 'https://telegram.org/img/t_logo.png';
-    if (channel.sl_avtar) {
-      if (channel.sl_avtar.startsWith('data:image')) {
-        return (
-          <img
-            src={channel.sl_avtar}
-            alt={channel.sl_title}
-            className="w-24 h-24 rounded-lg object-cover border border-blue-300 bg-white"
-            onError={e => (e.currentTarget.src = defaultLogo)}
-          />
-        );
-      }
-      if (channel.sl_avtar.startsWith('http')) {
-        return (
-          <img
-            src={channel.sl_avtar}
-            alt={channel.sl_title}
-            className="w-24 h-24 rounded-lg object-cover border border-blue-300 bg-white"
-            onError={e => (e.currentTarget.src = defaultLogo)}
-          />
-        );
-      }
+    const defaultLogo = 'https://telegramdirectory.org/img/logo.png';
+    if (channel.sl_avtar && channel.sl_avtar.startsWith('http')) {
+      return (
+        <img
+          src={channel.sl_avtar}
+          alt={channel.sl_title}
+          className="w-20 h-20 rounded-lg border-blue-300 border-4 object-cover bg-white"
+          onError={e => (e.currentTarget.src = defaultLogo)}
+        />
+      );
     }
-    // fallback to default logo
     return (
-      <img
-        src={defaultLogo}
-        alt="TGD Logo"
-        className="w-24 h-24 rounded-lg object-cover border border-blue-300 bg-white"
-      />
+      <svg
+        className="w-12 h-12 text-cyan-400"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+      </svg>
     );
   };
 
@@ -78,26 +67,35 @@ const FeaturedChannels: React.FC = () => {
             channels.map((channel, idx) => (
               <div
                 key={idx}
-                className="bg-[#b3e6ff] border-2 border-[#33c3ff] rounded-xl p-3 flex flex-row items-center space-x-4 w-full overflow-x-auto"
+                className="border-2 border-blue-300 rounded-md shadow-sm w-full flex p-2"
               >
-                {/* Avatar on the left */}
-                {renderAvatar(channel)}
-                {/* Channel Info on the right */}
-                <div className="flex-1 flex flex-col gap-2 w-full">
+                {/* Left Avatar Column */}
+                <div className="flex justify-center">
+                  <div className="w-full h-full flex items-center justify-center pr-2">
+                    {renderAvatar(channel)}
+                  </div>
+                </div>
+                {/* Right Content Column */}
+                <div className="w-10/12 flex flex-col justify-center">
                   <input
                     type="text"
-                    value={channel.sl_title}
+                    value={` ${channel.sl_title}`}
                     readOnly
-                    className="bg-white border border-blue-200 rounded-md px-3 py-2 text-lg font-normal text-gray-700 focus:outline-none cursor-default w-full min-w-0"
+                    className="w-full border-4 border-blue-300 rounded-sm mb-2 text-gray-800 font-medium"
                   />
-                  <a
-                    href={`https://t.me/${channel.sl_link}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#00aaff] hover:bg-[#0099dd] text-white rounded-md py-2 text-lg font-normal transition-colors w-full text-center"
+                  <button
+                    onClick={() =>
+                      window.open(
+                        channel.sl_link.startsWith('http')
+                          ? channel.sl_link
+                          : `https://t.me/${channel.sl_link}`,
+                        '_blank'
+                      )
+                    }
+                    className="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-2xl font-medium transition"
                   >
-                    Visit Channel
-                  </a>
+                    Visit channel
+                  </button>
                 </div>
               </div>
             ))
