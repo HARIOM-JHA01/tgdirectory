@@ -30,12 +30,14 @@ const SearchLink: React.FC = () => {
     const [results, setResults] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [hasSearched, setHasSearched] = useState(false);
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         setResults([]);
+        setHasSearched(true);
         const typeParam = selectedType === "Channel" ? 1 : 0;
         try {
             const response = await fetch(
@@ -148,6 +150,22 @@ const SearchLink: React.FC = () => {
                 <div className="px-4 pt-4">
                     {error && (
                         <div className="text-red-500 text-center">{error}</div>
+                    )}
+                    {results.length === 0 && !loading && hasSearched && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center relative">
+                                <button
+                                    className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-2xl"
+                                    onClick={() => window.location.reload()}
+                                >
+                                    &times;
+                                </button>
+                                <div className="text-lg font-semibold text-blue-700 mb-2">
+                                    No result found, <a href="/tgdirectory/submit-link" className="text-blue-500 underline hover:text-blue-700">“Submit Link”</a> is free for global marketing
+                                </div>
+                                <div className="text-gray-700 text-base">let our Subscribers Reach you</div>
+                            </div>
+                        </div>
                     )}
                     {results.length > 0 && (
                         <div className="flex flex-col items-center">

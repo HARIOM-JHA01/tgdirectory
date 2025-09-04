@@ -148,7 +148,7 @@ const SubmitLink: React.FC = () => {
         }
         try {
             const formData = new FormData();
-            formData.append("sl_type", selectedType);
+            formData.append("sl_type", selectedType === "Channel" ? "1" : "0");
             formData.append("sl_title", title);
             formData.append("sl_description", description);
             formData.append("sl_link", link.trim());
@@ -179,7 +179,7 @@ const SubmitLink: React.FC = () => {
                 setShowAllTags(false);
                 setErrors({});
                 setTimeout(() => {
-                    router("/my-submitted-links");
+                    router("/tgdirectory/my-submitted-links");
                 }, 1200);
             } else {
                 setErrors(
