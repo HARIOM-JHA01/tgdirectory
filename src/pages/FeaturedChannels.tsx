@@ -54,7 +54,7 @@ const FeaturedChannels: React.FC = () => {
 
   return (
     <Layout bgColor="bg-blue-50">
-      <div className="mt-4">
+      <div className="">
         {/* Banner Carousel */}
         <TopBannerCarousel height="h-[150px]" />
         {/* Featured Channel List */}
@@ -81,7 +81,7 @@ const FeaturedChannels: React.FC = () => {
                     type="text"
                     value={` ${channel.sl_title}`}
                     readOnly
-                    className="w-full border-4 border-blue-300 rounded-sm mb-2 text-gray-800 font-medium"
+                    className="w-full border-4 border-blue-300 rounded-sm mb-2 py-1 text-gray-800 font-medium"
                   />
                   <button
                     onClick={() =>
@@ -92,7 +92,7 @@ const FeaturedChannels: React.FC = () => {
                         '_blank'
                       )
                     }
-                    className="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-2xl font-medium transition"
+                    className="bg-blue-600 text-white py-1 rounded-lg font-medium transition"
                   >
                     Visit channel
                   </button>

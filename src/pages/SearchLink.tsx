@@ -160,10 +160,10 @@ const SearchLink: React.FC = () => {
                                 >
                                     &times;
                                 </button>
-                                <div className="text-lg font-semibold text-blue-700 mb-2">
-                                    No result found, <a href="/tgdirectory/submit-link" className="text-blue-500 underline hover:text-blue-700">“Submit Link”</a> is free for global marketing
+                                <div className="text-md font-semibold text-blue-700 mb-2">
+                                    No result found <br /> <a href="/tgdirectory/submit-link" className="text-blue-500 underline hover:text-blue-700">“Submit Link”</a> is free for global marketing
                                 </div>
-                                <div className="text-gray-700 text-base">let our Subscribers Reach you</div>
+                                <div className="text-md font-semibold text-blue-700">let our Subscribers Reach you</div>
                             </div>
                         </div>
                     )}

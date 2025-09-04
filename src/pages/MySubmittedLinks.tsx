@@ -55,6 +55,9 @@ const MySubmittedLinks: React.FC = () => {
     const [editForm, setEditForm] = useState<ViewLinkDetails | null>(null);
     const [editLoading, setEditLoading] = useState(false);
     const [editErrors, setEditErrors] = useState<Record<string, string>>({});
+    const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+    const [showAllTags, setShowAllTags] = useState(false);
 
     const navigate = useNavigate();
     const { t, l_key } = useLanguage();
@@ -119,6 +122,14 @@ const MySubmittedLinks: React.FC = () => {
         setEditForm(viewDetails);
         setShowEditForm(true);
         setEditErrors({});
+        // Set selectedLanguage from tag4 if present, else empty
+        if (viewDetails && viewDetails.sl_tag_4) {
+            setSelectedLanguage("__has_language__"); // placeholder to showAllTags
+            setShowAllTags(true);
+        } else {
+            setSelectedLanguage("");
+            setShowAllTags(false);
+        }
     };
 
     const handleEditFormChange = (field: string, value: string) => {
@@ -130,6 +141,8 @@ const MySubmittedLinks: React.FC = () => {
         if (!editForm?.id) return;
         setEditLoading(true);
         setEditErrors({});
+        // Debug: log editForm
+        console.log("Submitting edit form with data:", editForm);
         try {
             const formData = new FormData();
             formData.append("id", editForm.id);
@@ -143,6 +156,14 @@ const MySubmittedLinks: React.FC = () => {
                     `sl_tag_${i}`,
                     editForm[`sl_tag_${i}` as keyof ViewLinkDetails] || ""
                 );
+            }
+            // Optionally append language if needed by backend
+            // if (selectedLanguage && selectedLanguage !== "__has_language__") {
+            //     formData.append("language", selectedLanguage);
+            // }
+            // Debug: log FormData
+            for (const pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
             }
             const res = await fetch(`/api/${l_key.toLowerCase()}/submit-link`, {
                 method: "POST",
@@ -241,6 +262,28 @@ const MySubmittedLinks: React.FC = () => {
             fetchCountries();
         }
     }, [showFeaturePopup, featureType]);
+
+    useEffect(() => {
+        if (showEditForm) {
+            const fetchLanguages = async () => {
+                try {
+                    const res = await fetch("/api/getLanguage");
+                    const data = await res.json();
+                    const langs = data.data || data.language || [];
+                    setLanguages(Array.isArray(langs) ? langs : []);
+                } catch (error) {
+                    setLanguages([]);
+                }
+            };
+            fetchLanguages();
+            // Set selectedLanguage and showAllTags from editForm if available
+            if (editForm && editForm.sl_tag_4) {
+                setShowAllTags(true);
+            } else {
+                setShowAllTags(false);
+            }
+        }
+    }, [showEditForm, editForm]);
 
     const handleFeatureSubmit = async () => {
         if (!featureLinkId) return;
@@ -629,7 +672,7 @@ const MySubmittedLinks: React.FC = () => {
                                         required
                                     />
                                 </div>
-                                {[1, 2, 3, 4, 5, 6].map((i) => (
+                                {[1, 2, 3].map((i) => (
                                     <div key={i}>
                                         <label className="block font-medium">
                                             {t("TAG")}
@@ -648,6 +691,33 @@ const MySubmittedLinks: React.FC = () => {
                                                     e.target.value
                                                 )
                                             }
+                                            className="w-full border rounded px-3 py-2"
+                                        />
+                                    </div>
+                                ))}
+                                <div>
+                                    <label className="block font-medium">{t("OL")}</label>
+                                    <select
+                                        className="w-full border rounded px-3 py-2"
+                                        value={selectedLanguage}
+                                        onChange={(e) => {
+                                            setSelectedLanguage(e.target.value);
+                                            setShowAllTags(e.target.value !== "");
+                                        }}
+                                    >
+                                        <option value="">{t("OL")}</option>
+                                        {languages.map((lang) => (
+                                            <option key={lang.id} value={lang.name}>{lang.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {showAllTags && [4, 5, 6].map((i) => (
+                                    <div key={i}>
+                                        <label className="block font-medium">{t("TAG")}{i}</label>
+                                        <input
+                                            type="text"
+                                            value={editForm?.[`sl_tag_${i}` as keyof ViewLinkDetails] || ""}
+                                            onChange={(e) => handleEditFormChange(`sl_tag_${i}`, e.target.value)}
                                             className="w-full border rounded px-3 py-2"
                                         />
                                     </div>

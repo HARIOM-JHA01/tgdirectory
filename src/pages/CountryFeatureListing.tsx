@@ -103,16 +103,14 @@ const CountryFeatureListing: React.FC = () => {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 flex flex-col">
-                <div className=" ">
-                    <TopBannerCarousel height="h-[150px]" />
-                </div>
+            <div className="bg-gradient-to-b from-blue-100 to-blue-200 flex flex-col">
+                <TopBannerCarousel height="h-[150px]" />
 
-                <div className="mx-2">
+                <div className="mx-4">
                     <div className="relative">
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="w-full bg-white border-2 border-cyan-400 rounded-xl p-4 flex items-center justify-between text-left"
+                            className="w-full bg-white border-2 border-cyan-400 rounded-xl p-2 flex items-center justify-between text-left"
                         >
                             <span className="text-gray-800 font-medium text-lg">
                                 {selectedCountry?.name ?? "Select Country"}
@@ -154,7 +152,7 @@ const CountryFeatureListing: React.FC = () => {
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                    <div className="mx-auto w-full max-w-2xl mt-4 space-y-1 px-2 flex-1">
+                    <div className="mx-auto w-full max-w-2xl mt-4 space-y-1 px-4 flex-1">
                         {loading ? (
                             <div className="text-center text-gray-500 py-8">
                                 Loading channels...
@@ -200,7 +198,7 @@ const CountryFeatureListing: React.FC = () => {
                                             type="text"
                                             value={` ${ch.name}`}
                                             readOnly
-                                            className="w-full border-4 border-blue-300 rounded-sm mb-2 text-gray-800 font-medium"
+                                            className="w-full border-4 border-blue-300 rounded-sm mb-2 py-1 text-gray-800 font-medium"
                                         />
                                         <button
                                             onClick={() =>
@@ -211,7 +209,7 @@ const CountryFeatureListing: React.FC = () => {
                                                     "_blank"
                                                 )
                                             }
-                                            className="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-2xl font-medium transition"
+                                            className="bg-blue-600 text-white py-1 rounded-lg font-medium transition"
                                         >
                                             Visit channel
                                         </button>
