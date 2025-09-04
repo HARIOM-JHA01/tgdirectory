@@ -104,11 +104,11 @@ const CountryFeatureListing: React.FC = () => {
     return (
         <Layout>
             <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 flex flex-col">
-                <div className="mt-4 w-full max-w-2xl px-2">
-                    <TopBannerCarousel height="h-[135px]" />
+                <div className=" ">
+                    <TopBannerCarousel height="h-[150px]" />
                 </div>
 
-                <div className="mx-4 mt-6">
+                <div className="mx-2">
                     <div className="relative">
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -154,7 +154,7 @@ const CountryFeatureListing: React.FC = () => {
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                    <div className="mx-auto w-full max-w-2xl mt-6 space-y-4 px-2 flex-1">
+                    <div className="mx-auto w-full max-w-2xl mt-4 space-y-1 px-2 flex-1">
                         {loading ? (
                             <div className="text-center text-gray-500 py-8">
                                 Loading channels...
@@ -167,19 +167,24 @@ const CountryFeatureListing: React.FC = () => {
                             channels.map((ch) => (
                                 <div
                                     key={ch.id}
-                                    className="bg-[#b3e6ff] border-2 border-[#33c3ff] rounded-xl shadow-md p-4 w-full flex items-center gap-4 transition hover:shadow-lg"
+                                    className="border-2 border-blue-300 rounded-md shadow-sm w-full flex p-2"
                                 >
-                                    <div className="flex-shrink-0">
-                                        <div className="w-24 h-24 bg-cyan-100 rounded-lg flex items-center justify-center overflow-hidden border border-cyan-200">
+                                    {/* Left Avatar Column */}
+                                    <div className="flex justify-center">
+                                        <div className="w-full h-full flex items-center justify-center pr-2">
                                             {ch.avatar ? (
                                                 <img
                                                     src={ch.avatar}
                                                     alt={ch.name}
-                                                    className="w-full h-full object-cover rounded-lg"
+                                                    className="w-20 h-20 rounded-lg border-blue-300 border-4"
+                                                    onError={(e) => {
+                                                        e.currentTarget.src =
+                                                            "https://telegramdirectory.org/img/logo.png";
+                                                    }}
                                                 />
                                             ) : (
                                                 <svg
-                                                    className="w-24 h-24 text-cyan-400"
+                                                    className="w-12 h-12 text-cyan-400"
                                                     viewBox="0 0 24 24"
                                                     fill="currentColor"
                                                 >
@@ -188,30 +193,31 @@ const CountryFeatureListing: React.FC = () => {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex-1 flex flex-col gap-2 w-full min-w-0">
+
+                                    {/* Right Content Column (col-10 equivalent) */}
+                                    <div className="w-10/12 flex flex-col justify-center">
                                         <input
                                             type="text"
                                             value={ch.name}
                                             readOnly
-                                            className="font-semibold text-base text-gray-800 w-full border border-gray-200 rounded-md p-3"
+                                            className="w-full border-4 border-blue-300 rounded-sm mb-2 text-gray-800 font-medium"
                                         />
                                         <button
                                             onClick={() =>
                                                 window.open(
-                                                    ch.username.startsWith(
-                                                        "http"
-                                                    )
+                                                    ch.username.startsWith("http")
                                                         ? ch.username
                                                         : `https://t.me/${ch.username}`,
                                                     "_blank"
                                                 )
                                             }
-                                            className="bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-md font-medium text-center transition-colors"
+                                            className="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-2xl font-medium transition"
                                         >
-                                            Visit
+                                            Visit channel
                                         </button>
                                     </div>
                                 </div>
+
                             ))
                         )}
                     </div>

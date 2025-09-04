@@ -63,42 +63,40 @@ const TopBannerCarousel: React.FC<TopBannerCarouselProps> = ({ height = 'h-[135p
           <p className="text-gray-600">Loading banners...</p>
         </div>
       ) : banners.length > 0 ? (
-        <div className={`relative overflow-hidden rounded-lg ${height}`}>
+        <div className={`relative overflow-hidden ${height}`}>
           {banners.map((banner, index) => (
             <a
               key={banner.id}
               href={banner.slider_link}
               target="_blank"
               rel="noopener noreferrer"
-              className={`absolute inset-0 transition-opacity duration-500 ${
-                index === currentBannerIndex
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
-              }`}
+              className={`absolute inset-0 transition-opacity duration-500 ${index === currentBannerIndex
+                ? "opacity-100 z-10"
+                : "opacity-0 z-0"
+                }`}
             >
               <img
                 src={`${IMAGE_PATH}${banner.slider_banner_image}`}
                 alt={banner.slider_banner_img_alt || "Banner"}
-                className="w-full h-full rounded-lg shadow-lg"
+                className="w-[400px] h-[150px] shadow-lg object-contain"
               />
             </a>
           ))}
 
           {/* Carousel Navigation Dots */}
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-20">
+          {/* <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentBannerIndex(index)}
-                className={`w-1.5 h-1.5 rounded-full ${
-                  index === currentBannerIndex
-                    ? "bg-white"
-                    : "bg-gray-400"
-                }`}
+                className={`w-1.5 h-1.5 rounded-full ${index === currentBannerIndex
+                  ? "bg-white"
+                  : "bg-gray-400"
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}
-          </div>
+          </div> */}
         </div>
       ) : (
         <div className="bg-gray-200 rounded-lg p-4 flex items-center justify-center h-16">

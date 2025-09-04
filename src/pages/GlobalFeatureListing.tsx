@@ -96,7 +96,7 @@ const GlobalFeatureListing: React.FC = () => {
 
                 {/* Promotional Banner - now below the title */}
                 <div className="mx-auto w-full max-w-2xl px-2">
-                    <TopBannerCarousel height="h-[135px]" />
+                    <TopBannerCarousel height="h-[150px]" />
                 </div>
 
                 {/* Channel Listings */}

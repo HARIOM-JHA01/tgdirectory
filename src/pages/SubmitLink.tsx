@@ -213,7 +213,7 @@ const SubmitLink: React.FC = () => {
                 </div>
 
                 <div className="pt-4">
-                    <TopBannerCarousel />
+                    <TopBannerCarousel height="h-[150px]" />
                 </div>
 
                 <div className="px-4 pt-4">

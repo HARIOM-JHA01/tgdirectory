@@ -86,7 +86,7 @@ const SearchLink: React.FC = () => {
                 </div>
 
                 {/* Promotional Banner */}
-                <TopBannerCarousel />
+                <TopBannerCarousel height="h-[150px]" />
 
                 {/* Group/Channel Toggle */}
                 <div className="px-4 pt-4">

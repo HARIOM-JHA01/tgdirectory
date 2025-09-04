@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/layout/Layout';
-import BannerCarousel from '../components/TopBannerCarousel';
+import TopBannerCarousel from '../components/TopBannerCarousel';
 
 interface ApiChannel {
   sl_title: string;
@@ -67,7 +67,7 @@ const FeaturedChannels: React.FC = () => {
     <Layout bgColor="bg-blue-50">
       <div className="mt-4">
         {/* Banner Carousel */}
-        <BannerCarousel />
+        <TopBannerCarousel height="h-[150px]" />
         {/* Featured Channel List */}
         <div className="space-y-1 px-4">
           {loading ? (
