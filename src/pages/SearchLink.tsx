@@ -184,10 +184,10 @@ const SearchLink: React.FC = () => {
                                             alt={
                                                 results[carouselIndex].sl_title
                                             }
-                                            className="w-16 h-16 rounded-lg object-cover border border-blue-300 mr-3"
+                                            className="w-20 h-20 min-w-[64px] min-h-[64px] max-w-[64px] max-h-[64px] aspect-square rounded-lg object-cover border border-blue-300 mr-3 bg-white"
                                         />
                                     ) : (
-                                        <div className="w-16 h-16 rounded-lg bg-blue-200 flex items-center justify-center text-2xl font-bold text-white border border-blue-300 mr-3">
+                                        <div className="w-20 h-20 min-w-[64px] min-h-[64px] max-w-[64px] max-h-[64px] aspect-square rounded-lg bg-blue-200 flex items-center justify-center text-2xl font-bold text-white border border-blue-300 mr-3">
                                             {results[
                                                 carouselIndex
                                             ].sl_title.slice(0, 2)}

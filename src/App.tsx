@@ -14,8 +14,9 @@ import FeaturedChannels from "./pages/FeaturedChannels";
 import AnnouncementPage from "./pages/AnnouncementPage";
 import TicketQuota from "./pages/TicketQuota";
 import { useLanguage } from "./context/useLanguage";
-
-const BOT_TOKEN = "7207272180:AAE8AY94WPGRNY_m4s8lw6qeDRZGZCNmwwE";
+// import dotenv from "dotenv";
+// dotenv.config();
+const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
 const CHANNEL_NAME = "@TGDirectories";
 
 function App() {

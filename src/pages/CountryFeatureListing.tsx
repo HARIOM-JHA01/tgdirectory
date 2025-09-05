@@ -174,7 +174,7 @@ const CountryFeatureListing: React.FC = () => {
                                                 <img
                                                     src={ch.avatar}
                                                     alt={ch.name}
-                                                    className="w-20 h-20 rounded-lg border-blue-300 border-4"
+                                                    className="w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] aspect-square rounded-lg border-blue-300 border-4 object-cover bg-white"
                                                     onError={(e) => {
                                                         e.currentTarget.src =
                                                             "https://telegramdirectory.org/img/logo.png";

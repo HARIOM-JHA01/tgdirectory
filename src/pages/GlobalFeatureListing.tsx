@@ -48,7 +48,7 @@ const GlobalFeatureListing: React.FC = () => {
                 <img
                     src={channel.sl_avtar}
                     alt={channel.sl_title}
-                    className="w-20 h-20 rounded-lg object-cover border border-blue-300" // removed bg-white
+                    className="w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] aspect-square rounded-lg object-cover border border-blue-300 bg-white"
                 />
             );
         }
