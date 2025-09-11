@@ -178,7 +178,7 @@ const MySubmittedLinks: React.FC = () => {
             if (typeof data === "object" && data !== null) {
                 // If response is telegram format, ignore and look for next object
                 if (data.ok && data.result) {
-                    setEditSuccess(t("LINK_SUBMITTED_SUCCESS"));
+                    setEditSuccess(t("LINK_UPDATED_SUCCESSFULLY"));
                     setShowEditSuccessPopup(true);
                     setShowEditForm(false);
                     setShowViewPopup(false);
@@ -200,7 +200,7 @@ const MySubmittedLinks: React.FC = () => {
                 }
                 // If response is expected format
                 if (data.status === 1 && data.success === 1) {
-                    setEditSuccess(t("LINK_SUBMITTED_SUCCESS"));
+                    setEditSuccess(t("LINK_UPDATED_SUCCESSFULLY"));
                     setShowEditSuccessPopup(true);
                     setShowEditForm(false);
                     setShowViewPopup(false);
@@ -391,7 +391,7 @@ const MySubmittedLinks: React.FC = () => {
                             &times;
                         </button>
                         <h2 className="text-xl font-bold mb-4 text-green-700">
-                            {t("LINK_SUBMITTED_SUCCESS")}
+                            {t("LINK_UPDATED_SUCCESSFULLY")}
                         </h2>
                         <div className="mt-4">
                             <button
