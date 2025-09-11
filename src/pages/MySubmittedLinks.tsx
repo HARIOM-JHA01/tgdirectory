@@ -54,6 +54,7 @@ const MySubmittedLinks: React.FC = () => {
     const [showEditForm, setShowEditForm] = useState(false);
     const [editForm, setEditForm] = useState<ViewLinkDetails | null>(null);
     const [editLoading, setEditLoading] = useState(false);
+    const [editSuccess, setEditSuccess] = useState<string>("");
     const [editErrors, setEditErrors] = useState<Record<string, string>>({});
     const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -178,6 +179,7 @@ const MySubmittedLinks: React.FC = () => {
                 if (data.ok && data.result) {
                     // Try to get next response if possible
                     // If backend returns two JSON objects, this will not work, so fallback to success
+                    setEditSuccess("Link updated successfully!");
                     setShowEditForm(false);
                     setShowViewPopup(false);
                     setViewDetails(null);
@@ -198,6 +200,7 @@ const MySubmittedLinks: React.FC = () => {
                 }
                 // If response is expected format
                 if (data.status === 1 && data.success === 1) {
+                    setEditSuccess("Link updated successfully!");
                     setShowEditForm(false);
                     setShowViewPopup(false);
                     setViewDetails(null);
@@ -738,6 +741,11 @@ const MySubmittedLinks: React.FC = () => {
                                         />
                                     </div>
                                 ))}
+                                {editSuccess && (
+                                    <div className="text-green-600 text-sm">
+                                        {editSuccess}
+                                    </div>
+                                )}
                                 {editErrors.form && (
                                     <div className="text-red-600 text-sm">
                                         {editErrors.form}
