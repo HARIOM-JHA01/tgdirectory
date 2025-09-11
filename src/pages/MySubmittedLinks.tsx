@@ -55,6 +55,7 @@ const MySubmittedLinks: React.FC = () => {
     const [editForm, setEditForm] = useState<ViewLinkDetails | null>(null);
     const [editLoading, setEditLoading] = useState(false);
     const [editSuccess, setEditSuccess] = useState<string>("");
+    const [showEditSuccessPopup, setShowEditSuccessPopup] = useState(false);
     const [editErrors, setEditErrors] = useState<Record<string, string>>({});
     const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -177,9 +178,8 @@ const MySubmittedLinks: React.FC = () => {
             if (typeof data === "object" && data !== null) {
                 // If response is telegram format, ignore and look for next object
                 if (data.ok && data.result) {
-                    // Try to get next response if possible
-                    // If backend returns two JSON objects, this will not work, so fallback to success
-                    setEditSuccess("Link updated successfully!");
+                    setEditSuccess(t("LINK_SUBMITTED_SUCCESS"));
+                    setShowEditSuccessPopup(true);
                     setShowEditForm(false);
                     setShowViewPopup(false);
                     setViewDetails(null);
@@ -200,7 +200,8 @@ const MySubmittedLinks: React.FC = () => {
                 }
                 // If response is expected format
                 if (data.status === 1 && data.success === 1) {
-                    setEditSuccess("Link updated successfully!");
+                    setEditSuccess(t("LINK_SUBMITTED_SUCCESS"));
+                    setShowEditSuccessPopup(true);
                     setShowEditForm(false);
                     setShowViewPopup(false);
                     setViewDetails(null);
@@ -380,6 +381,29 @@ const MySubmittedLinks: React.FC = () => {
 
     return (
         <Layout bgColor="bg-blue-50">
+            {showEditSuccessPopup && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center relative">
+                        <button
+                            className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-2xl"
+                            onClick={() => setShowEditSuccessPopup(false)}
+                        >
+                            &times;
+                        </button>
+                        <h2 className="text-xl font-bold mb-4 text-green-700">
+                            {t("LINK_SUBMITTED_SUCCESS")}
+                        </h2>
+                        <div className="mt-4">
+                            <button
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold"
+                                onClick={() => setShowEditSuccessPopup(false)}
+                            >
+                                {t("CLOSE")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {showFeaturePopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                     <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center relative">
