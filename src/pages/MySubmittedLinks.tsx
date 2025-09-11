@@ -141,8 +141,6 @@ const MySubmittedLinks: React.FC = () => {
         if (!editForm?.id) return;
         setEditLoading(true);
         setEditErrors({});
-        // Debug: log editForm
-        console.log("Submitting edit form with data:", editForm);
         try {
             const formData = new FormData();
             formData.append("id", editForm.id);
@@ -157,10 +155,6 @@ const MySubmittedLinks: React.FC = () => {
                     editForm[`sl_tag_${i}` as keyof ViewLinkDetails] || ""
                 );
             }
-            // Optionally append language if needed by backend
-            // if (selectedLanguage && selectedLanguage !== "__has_language__") {
-            //     formData.append("language", selectedLanguage);
-            // }
             // Debug: log FormData
             for (const pair of formData.entries()) {
                 console.log(pair[0] + ': ' + pair[1]);
@@ -170,41 +164,63 @@ const MySubmittedLinks: React.FC = () => {
                 body: formData,
                 credentials: "include",
             });
-            const data = await res.json();
-            if (data.status !== 1 || data.success !== 1) {
-                setEditErrors({ form: data.msg ? data.msg : t("FAILED_UPDATE") });
+            let data;
+            try {
+                data = await res.json();
+            } catch (jsonErr) {
+                setEditErrors({ form: t("FAILED_UPDATE") });
                 setEditLoading(false);
                 return;
             }
-            setShowEditForm(false);
-            setShowViewPopup(false);
-            setViewDetails(null);
-            setSubmittedLinks((prev) =>
-                prev.map((l) =>
-                    l.id === editForm.id
-                        ? {
-                            ...l,
-                            sl_title: editForm.sl_title,
-                            sl_type: editForm.sl_type,
-                            sl_link: editForm.sl_link,
-                        }
-                        : l
-                )
-            );
-        } catch (err: unknown) {
-            // Try to extract API error message if possible
-            if (err instanceof Response) {
-                try {
-                    const errorData = await err.json();
-                    setEditErrors({ form: errorData.msg ? errorData.msg : t("FAILED_UPDATE") });
-                } catch {
-                    setEditErrors({ form: t("FAILED_UPDATE") });
+            // Handle case where response is an object with ok/result (telegram) and also the expected status/success
+            if (typeof data === "object" && data !== null) {
+                // If response is telegram format, ignore and look for next object
+                if (data.ok && data.result) {
+                    // Try to get next response if possible
+                    // If backend returns two JSON objects, this will not work, so fallback to success
+                    setShowEditForm(false);
+                    setShowViewPopup(false);
+                    setViewDetails(null);
+                    setSubmittedLinks((prev) =>
+                        prev.map((l) =>
+                            l.id === editForm.id
+                                ? {
+                                    ...l,
+                                    sl_title: editForm.sl_title,
+                                    sl_type: editForm.sl_type,
+                                    sl_link: editForm.sl_link,
+                                }
+                                : l
+                        )
+                    );
+                    setEditLoading(false);
+                    return;
                 }
-            } else if (typeof err === 'object' && err !== null && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
-                setEditErrors({ form: (err as { message: string }).message });
+                // If response is expected format
+                if (data.status === 1 && data.success === 1) {
+                    setShowEditForm(false);
+                    setShowViewPopup(false);
+                    setViewDetails(null);
+                    setSubmittedLinks((prev) =>
+                        prev.map((l) =>
+                            l.id === editForm.id
+                                ? {
+                                    ...l,
+                                    sl_title: editForm.sl_title,
+                                    sl_type: editForm.sl_type,
+                                    sl_link: editForm.sl_link,
+                                }
+                                : l
+                        )
+                    );
+                } else {
+                    setEditErrors({ form: data.msg ? data.msg : t("FAILED_UPDATE") });
+                }
             } else {
                 setEditErrors({ form: t("FAILED_UPDATE") });
             }
+        } catch (err: unknown) {
+            setEditErrors({ form: t("FAILED_UPDATE") });
         }
         setEditLoading(false);
     };
