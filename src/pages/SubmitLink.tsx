@@ -179,7 +179,7 @@ const SubmitLink: React.FC = () => {
                 setShowAllTags(false);
                 setErrors({});
                 setTimeout(() => {
-                    router("/tgdirectory/my-submitted-links");
+                    router("/my-submitted-links");
                 }, 1200);
             } else {
                 setErrors(
