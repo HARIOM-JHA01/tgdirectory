@@ -16,15 +16,17 @@ import TicketQuota from "./pages/TicketQuota";
 import { useLanguage } from "./context/useLanguage";
 // import dotenv from "dotenv";
 // dotenv.config();
-const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
-const CHANNEL_NAME = "@TGDirectories";
+// const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
+// const CHANNEL_NAME = "@TGDirectories";
 
 function App() {
     const [showWelcome, setShowWelcome] = useState(false);
     const [showUsernameExistPopup, setShowUsernameExistPopup] = useState(false);
     const [deletingUser, setDeletingUser] = useState(false);
     const { l_key } = useLanguage();
-    const [canLogin, setCanLogin] = useState(false);
+    const [canLogin] = useState(true);
+    const [showJoinChannelPopup, setShowJoinChannelPopup] = useState(false);
+    const [joinPopupTimer, setJoinPopupTimer] = useState<number | null>(null);
 
     // 1) Membership check on mount only
     useEffect(() => {
@@ -32,7 +34,7 @@ function App() {
 
         const user = WebApp.initDataUnsafe?.user;
         const telegramId = user?.id;
-        const username = user?.username || "";
+    const username = user?.username || "";
         if (!username) {
             WebApp.showAlert("You do not have a username for your telegram account. Please set a username before using this app.", () => {
                 WebApp.close();
@@ -40,73 +42,109 @@ function App() {
             return;
         }
 
-        const checkMembership = async () => {
+        // Membership check: if BOT token and channel name are provided via env, verify membership
+    (async () => {
+            const BOT_TOKEN = (import.meta as any).env?.VITE_BOT_TOKEN;
+            const CHANNEL_NAME = (import.meta as any).env?.VITE_CHANNEL_NAME || "@TGDirectories";
+            if (!BOT_TOKEN || !telegramId) return; // nothing to do
             try {
-                const response = await fetch(
+                const resp = await fetch(
                     `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CHANNEL_NAME}&user_id=${telegramId}`
                 );
-                const data = await response.json();
-                if (data?.ok && ["member", "administrator", "creator"].includes(data.result.status)) {
-                    setCanLogin(true);
-                } else {
-                    const params = {
-                        title: "Join our Channel",
-                        message:
-                            "To use this app, you need to join our official Telegram channel for access.\n\nClick the button below to join, then return to the app.",
-                        buttons: [
-                            { id: "close", text: "Close App", type: "destructive" as const },
-                            { id: "join", text: "Join Channel", type: "default" as const },
-                        ],
-                    };
-                    WebApp.showPopup(params, (buttonId) => {
-                        if (buttonId === "join") {
-                            const modal = document.createElement("div");
-                            modal.style.position = "fixed";
-                            modal.style.top = "0";
-                            modal.style.left = "0";
-                            modal.style.width = "100vw";
-                            modal.style.height = "100vh";
-                            modal.style.background = "rgba(0,0,0,0.35)";
-                            modal.style.display = "flex";
-                            modal.style.alignItems = "center";
-                            modal.style.justifyContent = "center";
-                            modal.style.zIndex = "9999";
-                            modal.innerHTML = `
-                <div style="background: #fff; padding: 2.5rem 1.5rem 2rem 1.5rem; border-radius: 1.25rem; max-width: 95vw; min-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10); text-align: center; position: relative; animation: popup-fade-in 0.3s;">
-                  <button id="close-modal-btn" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 1.5rem; color: #888; cursor: pointer;">&times;</button>
-                  <img src='src/assets/tgd-logo.png' alt='TGD Logo' style='display: block; margin: 0 auto 1rem auto; width: 56px; height: 56px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,136,204,0.10);' />
-                  <h2 style="font-size: 1.35rem; font-weight: bold; margin-bottom: 0.75rem; color: #0088cc; letter-spacing: 0.01em;">Join Our Telegram Channel</h2>
-                  <p style="margin-bottom: 1.5rem; color: #444; font-size: 1.05rem;">Click the link below to join our channel:</p>
-                  <a href="https://t.me/TGDirectories" target="_blank" rel="noopener noreferrer" style="color: #0088cc; font-size: 1.13rem; word-break: break-all; text-decoration: underline; font-weight: 500;">https://t.me/TGDirectories</a>
-                  <div style="margin-top: 2.2rem;">
-                    <button id="join-channel-btn" style="background: linear-gradient(90deg,#0088cc 60%,#32c5ff 100%); color: white; border: none; border-radius: 0.6rem; padding: 0.85rem 2.2rem; font-size: 1.08rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0,136,204,0.10); cursor: pointer; margin-bottom: 0.5rem;">Join Channel Now !!!</button>
-                  </div>
-                </div>
-                <style>@keyframes popup-fade-in { from { opacity: 0; transform: scale(0.95);} to { opacity: 1; transform: scale(1);} }</style>
-              `;
-                            document.body.appendChild(modal);
-                            document.getElementById("close-modal-btn")?.addEventListener("click", () => {
-                                document.body.removeChild(modal);
-                                WebApp.close();
-                            });
-                            document.getElementById("join-channel-btn")?.addEventListener("click", () => {
-                                window.location.href = "https://t.me/TGDirectories";
-                                setTimeout(() => { WebApp.close(); }, 300);
-                            });
-                        }
-                        if (buttonId === "close") {
-                            WebApp.close();
-                        }
-                    });
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const status = data?.result?.status;
+                // allowed statuses when user has joined
+                const allowed = ["member", "administrator", "creator"];
+                if (!allowed.includes(status)) {
+                    // show a short popup that auto closes after 5 seconds
+                    setShowJoinChannelPopup(true);
+                    const id = window.setTimeout(() => {
+                        setShowJoinChannelPopup(false);
+                        setJoinPopupTimer(null);
+                    }, 5000);
+                    setJoinPopupTimer(id as unknown as number);
                 }
             } catch (err) {
-                console.error("Error checking chat membership", err);
-                WebApp.showAlert(
-                    "To use this app, you have to Join to our channel: https://t.me/tgdirectories\nJoin us and try again later"
-                );
-                WebApp.close();
+                // ignore membership errors
+                console.warn("Membership check failed", err);
+            }
+        })();
+
+        // cleanup on unmount
+        return () => {
+            if (joinPopupTimer) {
+                window.clearTimeout(joinPopupTimer as unknown as number);
             }
         };
+
+        // const checkMembership = async () => {
+        //     try {
+        //         const response = await fetch(
+        //             `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CHANNEL_NAME}&user_id=${telegramId}`
+        //         );
+        //         const data = await response.json();
+        //         if (data?.ok && ["member", "administrator", "creator"].includes(data.result.status)) {
+        //             setCanLogin(true);
+        //         } else {
+        //             const params = {
+        //                 title: "Join our Channel",
+        //                 message:
+        //                     "To use this app, you need to join our official Telegram channel for access.\n\nClick the button below to join, then return to the app.",
+        //                 buttons: [
+        //                     { id: "close", text: "Close App", type: "destructive" as const },
+        //                     { id: "join", text: "Join Channel", type: "default" as const },
+        //                 ],
+        //             };
+        //             WebApp.showPopup(params, (buttonId) => {
+        //                 if (buttonId === "join") {
+        //                     const modal = document.createElement("div");
+        //                     modal.style.position = "fixed";
+        //                     modal.style.top = "0";
+        //                     modal.style.left = "0";
+        //                     modal.style.width = "100vw";
+        //                     modal.style.height = "100vh";
+        //                     modal.style.background = "rgba(0,0,0,0.35)";
+        //                     modal.style.display = "flex";
+        //                     modal.style.alignItems = "center";
+        //                     modal.style.justifyContent = "center";
+        //                     modal.style.zIndex = "9999";
+        //                     modal.innerHTML = `
+        //         <div style="background: #fff; padding: 2.5rem 1.5rem 2rem 1.5rem; border-radius: 1.25rem; max-width: 95vw; min-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.10); text-align: center; position: relative; animation: popup-fade-in 0.3s;">
+        //           <button id="close-modal-btn" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 1.5rem; color: #888; cursor: pointer;">&times;</button>
+        //           <img src='src/assets/tgd-logo.png' alt='TGD Logo' style='display: block; margin: 0 auto 1rem auto; width: 56px; height: 56px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,136,204,0.10);' />
+        //           <h2 style="font-size: 1.35rem; font-weight: bold; margin-bottom: 0.75rem; color: #0088cc; letter-spacing: 0.01em;">Join Our Telegram Channel</h2>
+        //           <p style="margin-bottom: 1.5rem; color: #444; font-size: 1.05rem;">Click the link below to join our channel:</p>
+        //           <a href="https://t.me/TGDirectories" target="_blank" rel="noopener noreferrer" style="color: #0088cc; font-size: 1.13rem; word-break: break-all; text-decoration: underline; font-weight: 500;">https://t.me/TGDirectories</a>
+        //           <div style="margin-top: 2.2rem;">
+        //             <button id="join-channel-btn" style="background: linear-gradient(90deg,#0088cc 60%,#32c5ff 100%); color: white; border: none; border-radius: 0.6rem; padding: 0.85rem 2.2rem; font-size: 1.08rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0,136,204,0.10); cursor: pointer; margin-bottom: 0.5rem;">Join Channel Now !!!</button>
+        //           </div>
+        //         </div>
+        //         <style>@keyframes popup-fade-in { from { opacity: 0; transform: scale(0.95);} to { opacity: 1; transform: scale(1);} }</style>
+        //       `;
+        //                     document.body.appendChild(modal);
+        //                     document.getElementById("close-modal-btn")?.addEventListener("click", () => {
+        //                         document.body.removeChild(modal);
+        //                         WebApp.close();
+        //                     });
+        //                     document.getElementById("join-channel-btn")?.addEventListener("click", () => {
+        //                         window.location.href = "https://t.me/TGDirectories";
+        //                         setTimeout(() => { WebApp.close(); }, 300);
+        //                     });
+        //                 }
+        //                 if (buttonId === "close") {
+        //                     WebApp.close();
+        //                 }
+        //             });
+        //         }
+        //     } catch (err) {
+        //         console.error("Error checking chat membership", err);
+        //         WebApp.showAlert(
+        //             "To use this app, you have to Join to our channel: https://t.me/tgdirectories\nJoin us and try again later"
+        //         );
+        //         WebApp.close();
+        //     }
+        // };
 
         // checkMembership();
     }, []);
@@ -261,6 +299,25 @@ function App() {
         <>
             {showWelcome && <WelcomeCard />}
             {showUsernameExistPopup && <UsernameExistPopup />}
+            {showJoinChannelPopup && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full text-center relative">
+                        <h2 className="text-xl font-bold text-blue-600 mb-2">Join our Channel to Get More Rewards</h2>
+                        <p className="text-gray-700 mb-4 text-sm">To use this App, Submit Links will get More Benefits. Click join Channel, and Contact us For Referral Programs @TGDirectory_org</p>
+                        <div className="flex justify-center">
+                            <a
+                                href="https://t.me/TGDirectory_org"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-600 text-white py-2 px-6 rounded-lg font-medium"
+                                onClick={() => setShowJoinChannelPopup(false)}
+                            >
+                                Join channel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
             <BrowserRouter basename="/tgdirectory">
                 <Routes>
                     <Route path="/" element={<HomePage />} />
