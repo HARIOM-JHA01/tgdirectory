@@ -55,7 +55,8 @@ const MySubmittedLinks: React.FC = () => {
     const [editForm, setEditForm] = useState<ViewLinkDetails | null>(null);
     const [editLoading, setEditLoading] = useState(false);
     const [editSuccess, setEditSuccess] = useState<string>("");
-    const [showEditSuccessPopup, setShowEditSuccessPopup] = useState(false);
+    const [showEditToast, setShowEditToast] = useState(false);
+    const [editToastTimer, setEditToastTimer] = useState<number | null>(null);
     const [editErrors, setEditErrors] = useState<Record<string, string>>({});
     const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -179,10 +180,7 @@ const MySubmittedLinks: React.FC = () => {
                 // If response is telegram format, ignore and look for next object
                 if (data.ok && data.result) {
                     setEditSuccess(t("LINK_UPDATED_SUCCESSFULLY"));
-                    setShowEditSuccessPopup(true);
-                    setShowEditForm(false);
-                    setShowViewPopup(false);
-                    setViewDetails(null);
+                    // update list immediately
                     setSubmittedLinks((prev) =>
                         prev.map((l) =>
                             l.id === editForm.id
@@ -195,16 +193,23 @@ const MySubmittedLinks: React.FC = () => {
                                 : l
                         )
                     );
+                    // show toast and auto close edit screen after 3s
+                    setShowEditToast(true);
+                    const id = window.setTimeout(() => {
+                        setShowEditToast(false);
+                        setShowEditForm(false);
+                        setShowViewPopup(false);
+                        setViewDetails(null);
+                        setEditToastTimer(null);
+                    }, 3000);
+                    setEditToastTimer(id as unknown as number);
                     setEditLoading(false);
                     return;
                 }
                 // If response is expected format
                 if (data.status === 1 && data.success === 1) {
                     setEditSuccess(t("LINK_UPDATED_SUCCESSFULLY"));
-                    setShowEditSuccessPopup(true);
-                    setShowEditForm(false);
-                    setShowViewPopup(false);
-                    setViewDetails(null);
+                    // update list immediately
                     setSubmittedLinks((prev) =>
                         prev.map((l) =>
                             l.id === editForm.id
@@ -217,6 +222,16 @@ const MySubmittedLinks: React.FC = () => {
                                 : l
                         )
                     );
+                    // show toast and auto close edit screen after 3s
+                    setShowEditToast(true);
+                    const id = window.setTimeout(() => {
+                        setShowEditToast(false);
+                        setShowEditForm(false);
+                        setShowViewPopup(false);
+                        setViewDetails(null);
+                        setEditToastTimer(null);
+                    }, 3000);
+                    setEditToastTimer(id as unknown as number);
                 } else {
                     setEditErrors({ form: data.msg ? data.msg : t("FAILED_UPDATE") });
                 }
@@ -305,6 +320,14 @@ const MySubmittedLinks: React.FC = () => {
         }
     }, [showEditForm, editForm]);
 
+    useEffect(() => {
+        return () => {
+            if (editToastTimer) {
+                window.clearTimeout(editToastTimer as unknown as number);
+            }
+        };
+    }, [editToastTimer]);
+
     const handleFeatureSubmit = async () => {
         if (!featureLinkId) return;
         setLoading(true);
@@ -381,29 +404,17 @@ const MySubmittedLinks: React.FC = () => {
 
     return (
         <Layout bgColor="bg-blue-50">
-            {showEditSuccessPopup && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center relative">
-                        <button
-                            className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-2xl"
-                            onClick={() => setShowEditSuccessPopup(false)}
-                        >
-                            &times;
-                        </button>
-                        <h2 className="text-xl font-bold mb-4 text-green-700">
-                            {t("LINK_UPDATED_SUCCESSFULLY")}
-                        </h2>
-                        <div className="mt-4">
-                            <button
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold"
-                                onClick={() => setShowEditSuccessPopup(false)}
-                            >
-                                {t("CLOSE")}
-                            </button>
-                        </div>
+            {/* Toast for edit success (non-blocking) */}
+            {showEditToast && (
+                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+                    <div className="bg-green-600 text-white px-4 py-3 rounded shadow-lg">
+                        {editSuccess || t("LINK_UPDATED_SUCCESSFULLY")}
                     </div>
                 </div>
             )}
+
+            {/* cleanup edit toast timer */}
+            {false && null}
             {showFeaturePopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                     <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center relative">
