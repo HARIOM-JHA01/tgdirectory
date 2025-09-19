@@ -108,7 +108,7 @@ function App() {
             }
         };
 
-        checkMembership();
+        // checkMembership();
     }, []);
 
     // 2) Login when language key changes AND membership has passed

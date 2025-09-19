@@ -37,54 +37,37 @@ const GlobalFeatureListing: React.FC = () => {
         fetchChannels();
     }, [l_key]);
 
-    const handleVisitChannel = (username: string) => {
-        window.open(`https://t.me/${username}`, "_blank");
-    };
+    // const handleVisitChannel = (username: string) => {
+    //     window.open(`https://t.me/${username}`, "_blank");
+    // };
 
-    // Helper to render avatar or fallback
+    // Use same avatar rendering as FeaturedChannels for consistent UI
     const renderAvatar = (channel: ApiChannel) => {
-        if (channel.sl_avtar && channel.sl_avtar.includes("http")) {
+        const defaultLogo = 'https://telegramdirectory.org/img/logo.png';
+        if (channel.sl_avtar && channel.sl_avtar.startsWith('http')) {
             return (
                 <img
                     src={channel.sl_avtar}
                     alt={channel.sl_title}
-                    className="w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] aspect-square rounded-lg object-cover border-4 border-blue-300 bg-white"
+                    className="w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] aspect-square rounded-lg border-blue-300 border-4 object-cover bg-white"
+                    onError={(e) => (e.currentTarget.src = defaultLogo)}
                 />
             );
         }
-        // Fallback: Telegram icon for missing avatar
-        if (channel.sl_title) {
-            // If title is 2 words, use initials, else use first 2 letters
-            const words = channel.sl_title.split(" ");
-            const initials =
-                words.length >= 2
-                    ? words[0][0] + words[1][0]
-                    : channel.sl_title.slice(0, 2);
-            if (initials.toUpperCase() === "BK") {
-                // Special fallback for 'BK' as in screenshot
-                return (
-                    <div className="w-20 h-20 rounded-lg bg-blue-200 flex items-center justify-center text-3xl font-bold text-white border border-blue-300">
-                        BK
-                    </div>
-                );
-            }
-        }
         return (
-            <div className="w-20 h-20 rounded-lg bg-blue-200 flex items-center justify-center border border-blue-300">
-                <svg
-                    className="w-12 h-12 text-white"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-                </svg>
-            </div>
+            <svg
+                className="w-12 h-12 text-cyan-400"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+            >
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+            </svg>
         );
     };
 
     return (
-        <Layout>
-            <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 flex flex-col">
+        <Layout bgColor="bg-blue-50">
+            <div className="">
                 {/* Global Featured Title - moved to top */}
                 {/* <div className="mx-auto w-full max-w-2xl py-6 px-4">
                     <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
@@ -97,8 +80,7 @@ const GlobalFeatureListing: React.FC = () => {
                 {/* Promotional Banner - now below the title */}
                 <TopBannerCarousel height="h-[150px]" />
 
-                {/* Channel Listings */}
-                <div className="mx-auto w-full max-w-2xl px-2">
+                <div className="space-y-1 px-4">
                     {isLoading && (
                         <div className="text-center text-lg">Loading...</div>
                     )}
@@ -133,9 +115,14 @@ const GlobalFeatureListing: React.FC = () => {
                                     />
                                     <button
                                         onClick={() =>
-                                            handleVisitChannel(channel.sl_link)
+                                            window.open(
+                                                channel.sl_link.startsWith('http')
+                                                    ? channel.sl_link
+                                                    : `https://t.me/${channel.sl_link}`,
+                                                '_blank'
+                                            )
                                         }
-                                        className="bg-blue-600 text-white py-1 rounded-lg shadow-md font-medium transition"
+                                        className="bg-blue-600 text-white py-1 rounded-lg font-medium transition"
                                     >
                                         Visit channel
                                     </button>
