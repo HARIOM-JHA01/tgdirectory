@@ -92,6 +92,17 @@ const MyFeatureListing: React.FC = () => {
 
     const visibleListings = filteredListings().slice(0, visibleCount);
 
+    // Helper to format date as dd mm yyyy
+    const formatDate = (dateStr: string | null) => {
+        if (!dateStr) return "-";
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day} ${month} ${year}`;
+    };
+
     return (
         <Layout bgColor="bg-blue-50">
             <div className="px-4 py-6">
@@ -186,10 +197,10 @@ const MyFeatureListing: React.FC = () => {
                                                     </a>
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-gray-500">
-                                                    {listing.start_date || "-"}
+                                                    {formatDate(listing.start_date)}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-gray-500">
-                                                    {listing.expire_date || "-"}
+                                                    {formatDate(listing.expire_date)}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-center">
                                                     {listing.days}
