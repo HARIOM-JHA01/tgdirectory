@@ -514,7 +514,7 @@ const MySubmittedLinks: React.FC = () => {
               </button>
             </div>
             {featureMsg && (
-              <div className="mt-4 text-center text-sm text-green-600">
+              <div className="mt-4 text-center text-sm text-red-600">
                 {featureMsg}
               </div>
             )}
